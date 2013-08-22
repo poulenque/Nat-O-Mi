@@ -14,3 +14,6 @@ It will include :
 
 - calculating new column from mesured data
 	- generate error
+
+- make some output in latex
+	- table
