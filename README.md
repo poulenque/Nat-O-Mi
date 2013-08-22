@@ -4,16 +4,26 @@ This tool was made to replace a physicist laboratory assistant who may want to u
 
 inputFileFormat :
 
+VAR_NAME should be written in this format : VAR_NAME [UNIT] [ERROR] [FORMULA]
 
-===================================    vim input.dat    =================================== _ [] X
-|VAR_0_NAME [UNIT] [ERROR] [FORMULA]     /tab or /space    VAR_1_NAME [UNIT] [ERROR] [FORMULA]   |
-|value                                   /tab or /space    value                                 |
-|value                                   /tab or /space    value                                 |
-|value                                   /tab or /space    value                                 |
-|value                                   /tab or /space    value                                 |
-|value                                   /tab or /space    value                                 |
-|...                                                                                             |
-==================================================================================================
+UNIT    : this is a tool for physicist, you have to put units in SI (meter,m,Km,second,s,Kg,g etc...)
+
+ERROR   : is of type CONSTANT or VARIABLE : if it is variable, you must write a VAR_NAME_ERROR column
+
+FORMULA : formula is optional : it is used when calculated with values from mesured or calculated data. It will generate 
+
+
+
+
+VAR_0_NAME [UNIT] [ERROR] [FORMULA]     /tab or /space    VAR_1_NAME [UNIT] [ERROR] [FORMULA]
+value                                   /tab or /space    value                              
+value                                   /tab or /space    value                              
+value                                   /tab or /space    value                              
+value                                   /tab or /space    value                              
+value                                   /tab or /space    value                              
+...                                                                                          
+
+
 
 
 
@@ -42,7 +52,8 @@ It will include :
 
 If we have time, may never happen :
 
-export from other fileformat to our format
+- define some new units ?
+- export from other fileformat to our format
 
 
 
