@@ -2,15 +2,16 @@
 This tool was made to replace a physicist laboratory assistant who may want to use terrible tools popular in the buisness world (such as Excel).
 
 
-inputFileFormat :
+inputFileFormat
+---------------
 
 VAR_NAME should be written in this format : VAR_NAME [UNIT] [ERROR] [FORMULA]
 
-UNIT    : this is a tool for physicist, you have to put units in SI (meter,m,Km,second,s,Kg,g etc...)
+	UNIT    : this is a tool for physicist, you have to put units in SI (meter,m,Km,second,s,Kg,g etc...)
 
-ERROR   : is of type CONSTANT or VARIABLE : if it is variable, you must write a VAR_NAME_ERROR column
+	ERROR   : is of type CONSTANT or VARIABLE : if it is variable, you must write a VAR_NAME_ERROR column
 
-FORMULA : formula is optional : it is used when calculated with values from mesured or calculated data. It will generate 
+	FORMULA : formula is optional, it is used when calculated with values from mesured or calculated data. It will generate 
 
 
 
