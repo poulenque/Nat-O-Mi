@@ -1,7 +1,10 @@
+from math import * # import all math functions
+import natparser
+
 #Na-O-Mi core functions
 def natomi_core(lines,formula):
 	#Parse the input file
-	column_names = natomi_line_parse(lines)
+	column_names = natparser.natomi_line_parse(lines)
 	#Write the first line of the file, since it isnot a comment
 	write_list = []
 	write_list.append(''.join(lines[0]))
@@ -11,8 +14,8 @@ def natomi_core(lines,formula):
 		splitrow = row.split(' ')
 		newrow = []
 
-		if natomi_is_commented(row): # ignore the comment lines
-			if not natomi_is_hardcomt(row):
+		if natparser.natomi_is_commented(row): # ignore the comment lines
+			if not natparser.natomi_is_hardcomt(row):
 				write_list.append(' '.join(splitrow))
 			continue
 
@@ -21,7 +24,7 @@ def natomi_core(lines,formula):
 			try:
 				exec(k+'='+'float(splitrow['+str(column_names.index(k))+'])')
 			except ValueError:
-				exec(k+'='+'splitrow['+str(column_names.index(k))+']')
+				exec(k+'='+'splitrow['+str(column_names.index(k))+']')#TODO wtf???
 
 		#Formula to compute the values
 		exec(formula)

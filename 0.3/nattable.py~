@@ -1,6 +1,6 @@
 #Natomi 3.0, Tex core table
 
-def natomi_table(outputfile):
+def natomi_table(lines,formula):
 	with open("table_"+outputfile+".tex",'w',encoding='utf-8') as output:
 		output.write("%This file is generated with N@-O-Mi-3.0\n")#Beurk?
 	output.closed

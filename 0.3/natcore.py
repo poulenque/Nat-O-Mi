@@ -1,7 +1,11 @@
+from math import * # import all math functions
+import natparser
+import sys
+
 #Na-O-Mi core functions
 def natomi_core(lines,formula):
 	#Parse the input file
-	column_names = natomi_line_parse(lines)
+	column_names = natparser.natomi_line_parse(lines)
 	#Write the first line of the file, since it isnot a comment
 	write_list = []
 	write_list.append(''.join(lines[0]))
@@ -11,8 +15,8 @@ def natomi_core(lines,formula):
 		splitrow = row.split(' ')
 		newrow = []
 
-		if natomi_is_commented(row): # ignore the comment lines
-			if not natomi_is_hardcomt(row):
+		if natparser.natomi_is_commented(row): # ignore the comment lines
+			if not natparser.natomi_is_hardcomt(row):
 				write_list.append(' '.join(splitrow))
 			continue
 
@@ -40,9 +44,9 @@ def natomi_mean(lines,column):
 	nmean = 0
 	n = 0 # the number of lines to divide for the mean value
 	#----
-	column_index = natomi_line_parse(lines).index(column)
+	column_index = natparser.natomi_line_parse(lines).index(column)
 	for line in lines[1:]:
-		if not natomi_is_commented(line):
+		if not natparser.natomi_is_commented(line):
 			try:
 				n += 1
 				nmean += float(line.split(' ')[column_index])
@@ -57,9 +61,9 @@ def natomi_deviation(lines,column):
 	sqsigma = 0 # partial deviation
 	n = 0 # the number of lines to divide for the deviation value
 	#----
-	column_index = natomi_line_parse(lines).index(column)
+	column_index = natparser.natomi_line_parse(lines).index(column)
 	for line in lines[1:]:
-		if not natomi_is_commented(line):
+		if not natparser.natomi_is_commented(line):
 			n += 1
 			sqsigma += (float(line.split(' ')[column_index]) - mean)**2
 	return (sqsigma/n)**(0.5)
