@@ -5,35 +5,46 @@ This tool was made to replace a physicist laboratory assistant who may want to u
 inputFileFormat
 ---------------
 
-VAR_NAME should be written in this format : VAR_NAME [UNIT] [ERROR] [FORMULA]
-
-	UNIT    : this is a tool for physicist, you have to put units in SI (meter,m,Km,second,s,Kg,g etc...)
-
-	ERROR   : is of type CONSTANT or VARIABLE : if it is variable, you must write a VAR_NAME_ERROR column
-
-	FORMULA : formula is optional, it is used when calculated with values from mesured or calculated data. It will generate 
+	VAR_NAME should be written in this format : VAR_NAME [UNIT] [ERROR] [FORMULA]
 
 
+	UNIT    : this is a tool for physicist,
+			  you have to put units in SI 
+			  (meter,m,Km,second,s,Kg,g etc...)
+
+	ERROR   : is of type CONSTANT or VARIABLE
+			  if VARIABLE -> you must write a VAR_NAME_ERROR column
+			  if CONSTANT -> enter the value in
+
+	FORMULA : formula is optional, it is used when calculated
+			  with values from mesured or calculated data.
+			  you won't have to fill this column manually,
+			  it will be generated with the ERROR column because
+			  error won't be constant in this situation.
 
 
-VAR_0_NAME [UNIT] [ERROR] [FORMULA]     /tab or /space    VAR_1_NAME [UNIT] [ERROR] [FORMULA]
-value                                   /tab or /space    value                              
-value                                   /tab or /space    value                              
-value                                   /tab or /space    value                              
-value                                   /tab or /space    value                              
-value                                   /tab or /space    value                              
-...                                                                                          
+input file should look like this :
+
+	VAR_NAME[][][]   /tabs and /spaces    VAR_NAME[][][]
+	value            /tabs and /spaces    value                              
+	value            /tabs and /spaces    value                              
+	value            /tabs and /spaces    value                              
+	value            /tabs and /spaces    value                              
+	value            /tabs and /spaces    value                              
+	...                                                                                          
 
 
 
 
 
-This tool include for now :
+This tool include for now
+-------------------------
 
 - pretty much nothing
 
 
-It will include :
+It will include
+---------------
 
 - plotting curves with GNUplot
 	- 2D/3D graphs
@@ -51,10 +62,33 @@ It will include :
 - Unit Checker
 
 
-If we have time, may never happen :
+If we have time, may never happen
+---------------------------------
 
 - define some new units ?
 - export from other fileformat to our format
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
