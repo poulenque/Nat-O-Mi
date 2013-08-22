@@ -1,0 +1,16 @@
+#!/usr/bin/python2.7
+
+import math
+import sys
+
+args = sys.argv
+U = float(args[1])
+I = float(args[2])
+time = float(args[3])
+V_H = float(args[4])
+V_O = float(args[4])
+pi = math.pi
+ln = math.log
+
+F = (time*I*10)/(2*0.998*V_H/(296*8.314472));
+print U, I, time, V_H, V_O, F

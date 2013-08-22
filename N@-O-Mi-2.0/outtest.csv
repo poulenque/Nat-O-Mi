@@ -1,0 +1,9 @@
+U[V] I[mA] Color Power[W] Time R[Ohm]
+0.4 10.0 {} . 0.1 0.04
+0.2 11.0 {} . 0.2 0.018181818181818184
+#test test
+0.1 5.0 {} . 0.3 0.02
+#The mean value of U is: 0.23333333333333336
+#The mean value of I is: 8.666666666666666
+#The deviation value of U is: 0.12472191289246473
+#The deviation value of I is: 2.6246692913372702
