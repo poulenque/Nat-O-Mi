@@ -2,6 +2,14 @@
 This tool was made to replace a physicist laboratory assistant who may want to use terrible tools popular in the buisness world (such as Excel).
 
 
+depends on
+----------
+
+python
+gnuplot
+context
+
+
 inputFileFormat
 ---------------
 
@@ -24,14 +32,14 @@ inputFileFormat
 
 
 input file should look like this :
+(separations are any combination of spaces and tabs)
 
-	VAR_NAME[][][]   /tabs and /spaces    VAR_NAME[][][]
-	value            /tabs and /spaces    value                              
-	value            /tabs and /spaces    value                              
-	value            /tabs and /spaces    value                              
-	value            /tabs and /spaces    value                              
-	value            /tabs and /spaces    value                              
-	...                                                                                          
+	hair[cm][0.2]     VAR_NAME[][][]
+	10.2              value
+	10.5              value
+	8.5               value
+	5.5               value
+	31.9              value
 
 
 
@@ -67,28 +75,6 @@ If we have time, may never happen
 
 - define some new units ?
 - export from other fileformat to our format
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
