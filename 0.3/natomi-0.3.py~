@@ -2,14 +2,15 @@
 
 #Import Basic lib
 from math import * # import all math functions
-import sys
 import argparse
 import re
 
-
-
+#Modules from N@-O-Mi
+import natparser
+import natcore
+import nattable
 #-----------------------------------------------------------------------
-#Na-O-Mi Main launch
+#Na-O-Mi Main
 #-----------------------------------------------------------------------
 
 #NEED TO SPECIFY A LIST OF INPUT FILES

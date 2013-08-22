@@ -1,13 +1,13 @@
-#!/usr/bin/python-3.2.3
+#!/usr/bin/env python
 
 #Import Basic lib
 from math import * # import all math functions
-import sys
-import argparse
 import re
 
-
-
+#Modules from N@-O-Mi
+import natparser
+import natcore
+import nattable
 #-----------------------------------------------------------------------
 #Na-O-Mi Main
 #-----------------------------------------------------------------------
