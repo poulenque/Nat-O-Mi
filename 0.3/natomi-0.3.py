@@ -15,6 +15,9 @@ import nattable
 # define the list of lines to write at the end
 write_list = [line.strip() for line in open(natparser.inputfile,'r') if line.strip()]
 
+write_list = natparser.natomi_tab_to_space(write_list)
+write_list = natparser.natomi_spaces_to_space(write_list)
+
 #Compute columns with natomi_core
 if natparser.args.formula:
 	formula = natparser.args.formula[0]

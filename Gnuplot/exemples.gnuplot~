@@ -12,7 +12,7 @@
 set terminal context standalone
 set output 'exple.tex' # fichier a compiler avec context
 
-#Pour appliquer du latex: '$ code latex $'
+#POur appliquer du latex: '$ code latex $'
 
 #Titre
 set title 'Exemple de gnuplot, avec $\LaTeX$'

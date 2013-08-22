@@ -50,3 +50,11 @@ def natomi_append_extra(outputfile,info):
 	with open(outputfile,'a') as output:
 		output.write("#"+info+"\n")
 	output.closed
+
+#Na-O-Mi Replace all tabs by spaces
+def natomi_tab_to_space(rowlist):
+	return [row.replace('\t', ' ') for row in rowlist]
+
+#Na-O-Mi Replace consecutive spaces to single space
+def natomi_spaces_to_space(rowlist):
+	return [' '.join(row.split()) for row in rowlist]

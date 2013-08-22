@@ -11,11 +11,14 @@ import nattable
 #Na-O-Mi Main
 #---------------------
 
-#NEED TO SPECIFY A LIST OF INPUT FILES
 
 # define the list of lines to write at the end
 write_list = [line.strip() for line in open(natparser.inputfile,'r') if line.strip()]
 
+write_list = natparser.natomi_tab_to_space(write_list)
+write_list = natparser.natomi_spaces_to_space(write_list)
+
+print(natparser.natomi_spaces_to_space(write_list))
 #Compute columns with natomi_core
 if natparser.args.formula:
 	formula = natparser.args.formula[0]
