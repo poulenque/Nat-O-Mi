@@ -1,6 +1,6 @@
 #!/usr/bin/python-3.2.3
 
-#Import Basic lib
+#Import
 from math import * # import all math functions
 import sys
 import argparse
