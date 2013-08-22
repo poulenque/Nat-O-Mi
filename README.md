@@ -1,6 +1,16 @@
-this is a test.
 
-with an UPDATE !!
+This tool was made to replace a physicist laboratory assistant who may want to use terrible tools popular in the buisness world (such as Excel).
+
+This tool include for now :
+
+- pretty much nothing
 
 
-with AN OTHER UPDATE ! OMG !
+It will include :
+
+- plotting curves with GNUplot
+	- 2D/3D graphs
+	- color images
+
+- calculating new column from mesured data
+	- generate error
