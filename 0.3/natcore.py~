@@ -3,19 +3,19 @@ import natparser
 import sys
 
 #Na-O-Mi core functions
-def natomi_core(lines,formula):
+def natomi_core(_list,formula):
 	#Parse the input file
-	column_names = natparser.natomi_line_parse(lines)
+	column_names = natparser.natomi_line_parse(_list,0)
 	#Write the first line of the file, since it isnot a comment
 	write_list = []
-	write_list.append(''.join(lines[0]))
+	write_list.append(''.join(_list[0]))
 
 	#Recopy and insert columns of the input to the outpufile
-	for row in lines[1:]:
+	for row in _list[1:]:
 		splitrow = row.split(' ')
 		newrow = []
 
-		if natparser.natomi_is_commented(row): # ignore the comment lines
+		if natparser.natomi_is_commented(row): # ignore the comment _list
 			if not natparser.natomi_is_hardcomt(row):
 				write_list.append(' '.join(splitrow))
 			continue
@@ -39,13 +39,13 @@ def natomi_core(lines,formula):
 	return write_list
 
 #Na-O-Mi mean value computing
-def natomi_mean(lines,column):
+def natomi_mean(_list,column):
 	#Define the mean float	
 	nmean = 0
-	n = 0 # the number of lines to divide for the mean value
+	n = 0 # the number of _list to divide for the mean value
 	#----
-	column_index = natparser.natomi_line_parse(lines).index(column)
-	for line in lines[1:]:
+	column_index = natparser.natomi_line_parse(_list,0).index(column)
+	for line in _list[1:]:
 		if not natparser.natomi_is_commented(line):
 			try:
 				n += 1
@@ -56,13 +56,13 @@ def natomi_mean(lines,column):
 	return nmean/n
 
 #Na-O-Mi deviation computing
-def natomi_deviation(lines,column):
-	mean = natomi_mean(lines,column)
+def natomi_deviation(_list,column):
+	mean = natomi_mean(_list,column)
 	sqsigma = 0 # partial deviation
-	n = 0 # the number of lines to divide for the deviation value
+	n = 0 # the number of _list to divide for the deviation value
 	#----
-	column_index = natparser.natomi_line_parse(lines).index(column)
-	for line in lines[1:]:
+	column_index = natparser.natomi_line_parse(_list,0).index(column)
+	for line in _list[1:]:
 		if not natparser.natomi_is_commented(line):
 			n += 1
 			sqsigma += (float(line.split(' ')[column_index]) - mean)**2

@@ -23,19 +23,27 @@ parser.add_argument('-d',dest='columnd',nargs='+',type=str,metavar='COLUMN',
 #parser.add_argument('-t', dest='table',nargs=2,type=str,
 #	help='Create a table with caption and label',action='store',metavar=('CAPTION', 'LABEL'))
 
+parser.add_argument('-g','--gnuplot', dest='gnpvar',nargs='+',type=str,
+	help='Create gnuplot script file',action='store')
 
-#USEFUL VARIABLES
+#ARGS VARIABLES
 args = parser.parse_args()
 inputfile = args.inputfiles
 outputfile = args.outpufiles
 
-
+gnpvar = args.gnpvar
 
 #USEFUL FUNCTIONS
 
+#Na-O-Mi open file and make it cool
+def natopenf(infile):
+	_list = [line.strip() for line in open(infile,'r') if line.strip()]
+	_list = natomi_tab_to_space(_list)
+	return natomi_spaces_to_space(_list)
+
 #Na-O-Mi first line parser
-def natomi_line_parse(lines):
-	return re.sub('\(.*?\)','',lines[0]).split(' ')
+def natomi_line_parse(_list,index):
+	return re.sub('\(.*?\)','',_list[index]).split(' ')
 
 #Na-O-Mi is line commented
 def natomi_is_commented(line):
@@ -58,3 +66,11 @@ def natomi_tab_to_space(rowlist):
 #Na-O-Mi Replace consecutive spaces to single space
 def natomi_spaces_to_space(rowlist):
 	return [' '.join(row.split()) for row in rowlist]
+
+#Na-O-Mi Replace consecutive spaces to single space
+def natfind_in_line(name,line_number):
+	print(natomi_line_parse(_list,line_number).index(name))
+	return natomi_line_parse(_list,line_number).index(name)
+
+#Definition of global variable _list
+_list = natopenf(inputfile)
