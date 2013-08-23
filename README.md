@@ -34,12 +34,12 @@ inputFileFormat
 input file should look like this :
 (separations are any combination of spaces and tabs)
 
-	hair[cm][0.2]     VAR_NAME[][][]
-	10.2              value
-	10.5              value
-	8.5               value
-	5.5               value
-	31.9              value
+	hair[cm][0.2]     mass[g][10]   ratio[][][hair/mass]
+	10.2              300           
+	10.5              330           
+	8.5               250           
+	5.5               120           
+	31.9              480           
 
 
 
