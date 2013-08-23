@@ -38,14 +38,14 @@ gnpvar = args.gnpvar
 #Na-O-Mi open file and make it cool
 def natopenf(infile):
 	_list = [line.strip() for line in open(infile,'r') if line.strip()]
-	# _list = filter(lambda x: not re.match(r'^\s*$', x), _list)
+	_list = filter(lambda x: not re.match(r'^\s*$', x), _list)
 	_list = natomi_tab_to_space(_list)
 	return natomi_spaces_to_space(_list)
 
 
 #Na-O-Mi first line parser
 def natomi_line_parse(_list,index):
-	return re.sub('\(.*?\)','',_list[index]).split(' ')
+	return re.sub('\[.*?\]','',_list[index]).split(' ')
 
 #Na-O-Mi is line commented
 def natomi_is_commented(line):
