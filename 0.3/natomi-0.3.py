@@ -35,9 +35,8 @@ if natparser.args.columnd:
 		+" is: "+str(natomi_deviation(_list,column)))
 
 
-if natparser.args.gnpvar:
-	for gnpvar in natparser.args.gnpvar:
-		natplot.natomi_plot(gnpvar)
+if natparser.args.gnpvar:	
+	natplot.natomi_plot(natparser.args.gnpvar)
 
 
 #Finally we write the _list into the file
