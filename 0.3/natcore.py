@@ -7,8 +7,8 @@ def natomi_core(_list,formula):
 	#Parse the input file
 	column_names = natparser.natomi_line_parse(_list,0)
 	#Write the first line of the file, since it isnot a comment
-	_list = []
-	_list.append(''.join(_list[0]))
+	write_list = []
+	write_list.append(''.join(_list[0]))
 
 	#Recopy and insert columns of the input to the outpufile
 	for row in _list[1:]:
@@ -17,7 +17,7 @@ def natomi_core(_list,formula):
 
 		if natparser.natomi_is_commented(row): # ignore the comment _list
 			if not natparser.natomi_is_hardcomt(row):
-				_list.append(' '.join(splitrow))
+				write_list.append(' '.join(splitrow))
 			continue
 
 		for k in column_names:
@@ -35,8 +35,8 @@ def natomi_core(_list,formula):
 			exec("newrow.append(str(" + k + "))")
 
 		#Write finally into the outputfile
-		_list.append(' '.join(newrow))
-	return _list
+		write_list.append(' '.join(newrow))
+	return write_list
 
 #Na-O-Mi mean value computing
 def natomi_mean(_list,column):
