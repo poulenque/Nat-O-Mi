@@ -5,5 +5,5 @@ set title 'examples/input.dat'
 set autoscale
 set grid
 set xtics auto
-set xlabel 'I'
-I=3
+set xlabel 'U'
+U=1
