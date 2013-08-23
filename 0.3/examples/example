@@ -1,1 +1,0 @@
-./../natomi-0.3.py -i input.dat -o output -f "Faraday = I_error*I+sqrt(U)/VolumeI/58" 

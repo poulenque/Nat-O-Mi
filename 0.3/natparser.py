@@ -71,8 +71,12 @@ def natomi_spaces_to_space(rowlist):
 
 #Na-O-Mi Replace consecutive spaces to single space
 def natfind_in_line(name,line_number):
-	#We want the column number, not the indexs
-	return 1+natomi_line_parse(_list,line_number).index(name)
+	try:
+		#We want the column number, not the indexs so +1
+		return 1+natomi_line_parse(_list,line_number).index(name)
+	except ValueError:
+		print("The argument doesn't exist in the file header list")
+		sys.exit(1)
 
 #Definition of global variable _list
 _list = natopenf(inputfile)
