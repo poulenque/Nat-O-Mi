@@ -1,5 +1,5 @@
 
-CC = g++
+CC = g++-4.7
 C_FLAGS += -W -Wall -ansi -pedantic -static -g
 CFLAGS += -Wall -Wextra -Wwrite-strings -Winit-self -Wcast-align -Wcast-qual
 CFLAGS += -Wpointer-arith -Wformat=2 -Wlogical-op
