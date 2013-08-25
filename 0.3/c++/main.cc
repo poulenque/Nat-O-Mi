@@ -15,7 +15,7 @@ ostream & operator<<(ostream& out,vector<string> v){
 	return out;
 }
 
-string double2str(const double x) {
+string double2str(double const x) {
 	std::ostringstream oss;
 	oss << x;
 	return oss.str();
@@ -31,9 +31,9 @@ int main(int argc, char* argv[]) {
 
 	string read_line;
 	vector<string> data_line;
-	vector<natInfo> data_info;
-	vector<string> 				data_name_num_to_str;
-	map<string, size_t> 	data_name_str_to_num;
+	vector<natInfo> data_header;
+	vector<string> 				dataName_num2str;
+	map<string, size_t> 	dataName_str2num;
 
 
 	//====================================================
@@ -53,7 +53,11 @@ int main(int argc, char* argv[]) {
 		cout<<"coult not open file"<<get_args().input_file_path<<endl;
 		exiting=true;
 	}
-	if(exiting)exit(0);
+	if(exiting){
+		input_file.close();
+		output_file.close();
+		exit(0);
+	}
 
 
 
@@ -61,18 +65,17 @@ int main(int argc, char* argv[]) {
 	data_line=natParseNext(input_file);
 	if(data_line.size()==0){
 		cout<<get_args().input_file_path<<" is empty."<<endl;
+		input_file.close();
+		output_file.close();
 		exit(0);
 	}
 
-	data_info=natParseHeader(data_line);
+	data_header=natParseHeader(data_line);
 
-	//test
-	data_name_num_to_str=data_line;
-
-
-	//create the map
-	for(size_t i=0;i<data_name_num_to_str.size();i++)
-		data_name_str_to_num.insert(std::pair<string,size_t>(data_name_num_to_str[i],i) );
+	//num2str str2num
+	dataName_num2str=data_line;
+	for(size_t i=0;i<dataName_num2str.size();i++)
+		dataName_str2num.insert(std::pair<string,size_t>(dataName_num2str[i],i) );
 	
 
 
