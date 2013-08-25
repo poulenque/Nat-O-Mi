@@ -18,7 +18,7 @@ def natomi_table(outputfile):
 		output.write("\t\\hline\n")
 		#TITLE
 		output.write("\t")
-		output.write( re.sub('\(.*?\)','' ,re.sub(' ',' & ',_list[0]) ) )
+		output.write( re.sub('\[.*?\]','' ,re.sub(' ',' & ',_list[0]) ) )
 		output.write("\n")
 
 
@@ -28,10 +28,10 @@ def natomi_table(outputfile):
 		output.write("\t\\hline\n")
 		output.write("\t")
 		#loop{{{
-		#output.write( var)
+		output.write( var)
 		output.write( "& ")
 		#}}}
-		#output.write( var0 )
+		output.write( var0 )
 		output.write("\n")
 
 		#}}}

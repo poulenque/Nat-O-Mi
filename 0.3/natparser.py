@@ -5,9 +5,9 @@ import re
 #Parse options
 args = sys.argv
 
-#Na-O-Mi 2.0 args
+#Na-O-Mi 0.3 args
 parser = argparse.ArgumentParser(conflict_handler='resolve')
-parser.add_argument('-v','--version', action='version', version='N@-O-Mi 2.0')
+parser.add_argument('-v','--version', action='version', version='N@-O-Mi 0.3')
 parser.add_argument('-i', dest='inputfiles',type=str,
 	help='Specify the input files',action='store',required = True)
 parser.add_argument('-o', dest='outpufiles',type=str,
@@ -23,8 +23,10 @@ parser.add_argument('-d',dest='columnd',nargs='+',type=str,metavar='COLUMN',
 #parser.add_argument('-t', dest='table',nargs=2,type=str,
 #	help='Create a table with caption and label',action='store',metavar=('CAPTION', 'LABEL'))
 
-parser.add_argument('-g','--gnuplot', dest='gnpvar',nargs='+',type=str,
+parser.add_argument('-g','--gnuplot', dest='gnpvar',nargs=2,type=str,
 	help='Create gnuplot script file',action='store')
+
+
 
 #ARGS VARIABLES
 args = parser.parse_args()
