@@ -15,7 +15,7 @@ ostream & operator<<(ostream& out,vector<string> v){
 	return out;
 }
 
-string double2str(double x) {
+string double2str(const double x) {
 	std::ostringstream oss;
 	oss << x;
 	return oss.str();
