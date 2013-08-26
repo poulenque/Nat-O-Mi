@@ -18,13 +18,19 @@ double MySqr(double a_fVal) {
 }
 
 
+#define TEMP_EXIT_FUNCTION \
+		input_file.close();\
+		output_file.close();\
+		exit(0);
+
+
 int main(int argc, char* argv[]) {
 	using namespace std;
 
 	string read_line;
 	vector<string> data_line;
-	vector<natInfo> data_header;
-	vector<string> 				dataName_num2str;
+	vector<natInfo> data_info;
+	vector<string> 				dataName_num2str;//might be useless
 	map<string, size_t> 	dataName_str2num;
 
 
@@ -46,9 +52,7 @@ int main(int argc, char* argv[]) {
 		exiting=true;
 	}
 	if(exiting){
-		input_file.close();
-		output_file.close();
-		exit(0);
+		TEMP_EXIT_FUNCTION
 	}
 
 	//trouver la ligne avec les noms de variable
@@ -56,12 +60,10 @@ int main(int argc, char* argv[]) {
 	if(data_line.size()==0){
 		cout<<CONSOL_RED_TEXT<<"\""<<CONSOL_CYAN_TEXT<<get_args().input_file_path
 		<<CONSOL_RED_TEXT<<"\" is empty."<<endl;
-		input_file.close();
-		output_file.close();
-		exit(0);
+		TEMP_EXIT_FUNCTION
 	}
 
-	data_header=natParseHeader(data_line);
+	data_info=natParseHeader(data_line);
 
 	//num2str str2num
 	dataName_num2str=data_line;
