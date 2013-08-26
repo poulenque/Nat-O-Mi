@@ -78,6 +78,13 @@ int main(int argc, char* argv[]) {
 		dataName_str2num.insert(std::pair<string,size_t>(dataName_num2str[i],i) );
 	
 
+
+
+
+
+
+
+
 	//loop
 	//lire data
 	//mettre en forme
