@@ -30,7 +30,6 @@ const Unit unit_candela = {17,1};
 
 using namespace std;
 
-//input should not be a formula
 Unit str2unit_simple(string name){
 	boost::algorithm::to_lower(name);
 	//==========
@@ -81,6 +80,7 @@ Unit str2unit(string name){
 }
 
 string unit2str(Unit unit){
+	//TODO
 	string s="TODO";
 	return s;
 }

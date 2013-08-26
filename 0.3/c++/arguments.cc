@@ -1,5 +1,6 @@
 #include "arguments.h"
 #include <iostream>
+#include <string.h>
 
 static Args args;
 
@@ -10,9 +11,10 @@ Args get_args(){
 void process_args(int argc, char* argv[]){
 
 	int temp=0;
-	bool exitting=false;
+	bool exiting=false;
+	char argumentator = '-';
 
-	while(++temp!=argc){
+	while(++temp<argc){
 		string s = argv[temp];
 		if(s=="-h"||s=="--help"){
 			cout<<" 	usage: natomi-0.3.py [-h] [-v] -i INPUTFILES -o OUTPUFILES [-f FORMULA]"<<endl;
@@ -46,28 +48,34 @@ void process_args(int argc, char* argv[]){
 			if(++temp!=argc)
 				args.formula = argv[temp];
 		}else if(s=="-m"){
-			if(++temp!=argc)
+			while(++temp<argc && (char)argv[temp][0]!=argumentator){
 				args.to_calculate_mean.push_back(argv[temp]);
+			}
+			if((char)argv[temp][0]==argumentator)temp--;
 		}else if(s=="-d"){
-			if(++temp!=argc)
+			while(++temp<argc && (char)argv[temp][0]!=argumentator){
 				args.to_calculate_deviation.push_back(argv[temp]);
+			}
+			if((char)argv[temp][0]==argumentator)temp--;
 		}else if(s=="-g"){
-			if(++temp!=argc)
+			while(++temp<argc && (char)argv[temp][0]!=argumentator){
 				args.to_calculate_gnuplot.push_back(argv[temp]);
+			}
+			if((char)argv[temp][0]==argumentator)temp--;
 		}else {
-			cout<<"argument \""<<s<<"\""<< "doesn\'t mean anything."<<endl;
-			exitting=true;
+			cout<<"argument \""<<s<<"\""<< " doesn\'t mean anything."<<endl;
+			exiting=true;
 		}
 	}
 	
 	if(args.input_file_path==""){
 		cout<<"input file path missing, please use -i INPUTFILE "<<endl;
-		exitting=true;
+		exiting=true;
 	}
 	if(args.output_file_path==""){
 		cout<<"output file path missing, please use -o OUTPUTFILE "<<endl;
-		exitting=true;
+		exiting=true;
 	}
-	if(exitting)exit(0);
+	if(exiting)exit(0);
 
 }

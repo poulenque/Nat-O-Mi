@@ -8,7 +8,6 @@
 using namespace boost;
 
 vector<string> natParseStr(string read_line){
-
 	vector<string> v;
 
 	char_separator<char> sep(" \t");
@@ -38,6 +37,7 @@ vector<string> natParseNext(ifstream& input_file){
 }
 
 
+//TODO
 
 vector<natInfo> natParseHeader(vector<string> input){
 	vector<natInfo> c;
