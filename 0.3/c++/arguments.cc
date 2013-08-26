@@ -1,3 +1,4 @@
+#include "consol_color.h"
 #include "arguments.h"
 #include <iostream>
 #include <string.h>
@@ -63,17 +64,18 @@ void process_args(int argc, char* argv[]){
 			}
 			if((char)argv[temp][0]==argumentator)temp--;
 		}else {
-			cout<<"argument \""<<s<<"\""<< " doesn\'t mean anything."<<endl;
+			cout<<CONSOL_RED_TEXT<<"argument \""<<CONSOL_CYAN_TEXT<<s
+			<<CONSOL_RED_TEXT<<"\""<< " doesn\'t mean anything."<<endl;
 			exiting=true;
 		}
 	}
 	
 	if(args.input_file_path==""){
-		cout<<"input file path missing, please use -i INPUTFILE "<<endl;
+		cout<<CONSOL_RED_TEXT<<"input file path missing, please use -i INPUTFILE "<<endl;
 		exiting=true;
 	}
 	if(args.output_file_path==""){
-		cout<<"output file path missing, please use -o OUTPUTFILE "<<endl;
+		cout<<CONSOL_RED_TEXT<<"output file path missing, please use -o OUTPUTFILE "<<endl;
 		exiting=true;
 	}
 	if(exiting)exit(0);

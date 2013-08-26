@@ -1,3 +1,4 @@
+#include "consol_color.h"
 #include <iostream>
 #include <muParser.h>
 #include <vector>
@@ -8,6 +9,7 @@
 
 #include "arguments.h"
 #include "natparser.h"
+
 
 ostream & operator<<(ostream& out,vector<string> v){
 	for (const auto& t : v)
@@ -45,12 +47,12 @@ int main(int argc, char* argv[]) {
 	
 	ofstream output_file(get_args().output_file_path);
 	if(!output_file.is_open()){
-		cout<<"could not open file"<<get_args().output_file_path<< endl;
+		cout<<CONSOL_RED_TEXT<<"could not open file"<<CONSOL_CYAN_TEXT<<get_args().output_file_path<< endl;
 		exiting=true;
 	}
 	ifstream input_file(get_args().input_file_path);
 	if(!input_file.is_open()){
-		cout<<"coult not open file"<<get_args().input_file_path<<endl;
+		cout<<CONSOL_RED_TEXT<<"could not open file"<<CONSOL_CYAN_TEXT<<get_args().input_file_path<<endl;
 		exiting=true;
 	}
 	if(exiting){
@@ -62,8 +64,9 @@ int main(int argc, char* argv[]) {
 
 	//trouver la ligne avec les noms de variable
 	data_line=natParseNext(input_file);
-	if(input_file.peek() == std::ifstream::traits_type::eof()){
-		cout<<get_args().input_file_path<<" is empty."<<endl;
+	if(data_line.size()==0){
+		cout<<CONSOL_RED_TEXT<<"\""<<CONSOL_CYAN_TEXT<<get_args().input_file_path
+		<<CONSOL_RED_TEXT<<"\" is empty."<<endl;
 		input_file.close();
 		output_file.close();
 		exit(0);

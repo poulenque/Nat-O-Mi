@@ -17,7 +17,6 @@ struct natInfo{
 	string formula;
 };
 
-vector<string> natParseStr(string read_line);
 vector<string> natParseNext(ifstream& input_file);
 vector<natInfo> natParseHeader(vector<string> input);
 

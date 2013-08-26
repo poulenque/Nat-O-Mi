@@ -1,8 +1,9 @@
 
 	 	 		  
-							
+	
+#test						
       
-U[V] [1] 	U_error[V][31] 	I[A][0.2] 	I_error[A][3] 	Temps[s] 	VolumeH[L] 	VolumeI[L] 	Faraday[C][]	[U_error+I]
+U[ V ] [  1 ] 	U_error[V][31] 	I[A][0.2] 	I_error[A][3] 	Temps[s][3] 	VolumeH[L][3] 	VolumeI[L][1] 	Faraday[C][]	[U_error+I] 
        
   
 9.76 		0.01 			0.365 		0.001 		21.54 		1.0 		0.5 		.
