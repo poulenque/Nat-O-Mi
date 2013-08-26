@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <boost/tokenizer.hpp>
+#include <boost/lexical_cast.hpp>
 
 using namespace boost;
 
@@ -76,6 +77,9 @@ vector<string> natParseNext(ifstream& input_file){
 
 
 //TODO
+//
+//Complete missing things : calculate Unit
+//check Units is formulae
 //
 //weird stuff like [[] or []]
 //error in % or %0 or constant or variable
@@ -155,3 +159,25 @@ vector<natInfo> natParseHeader(vector<string> input){
 }
 
 
+
+
+
+
+//TODO
+vector<double> natParseContent(vector<string> input){
+	vector<double> ret;
+	for(size_t i=0;i<input.size();i++){
+		double d;
+		try{
+			d = boost::lexical_cast<double>(input[i]);
+			ret.push_back(d);
+		}catch (boost::bad_lexical_cast const&){
+			//si ca ne marche pas,
+			//c'est qu'il s'agit d'un
+			//code...
+			//NaN
+			//to Calculate
+		}
+	}
+	return ret;
+}

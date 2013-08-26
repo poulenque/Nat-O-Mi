@@ -19,5 +19,6 @@ struct natInfo{
 
 vector<string> natParseNext(ifstream& input_file);
 vector<natInfo> natParseHeader(vector<string> input);
+vector<double> natParseContent(vector<string> input);
 
 #endif

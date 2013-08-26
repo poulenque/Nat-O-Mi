@@ -52,17 +52,17 @@ void process_args(int argc, char* argv[]){
 			while(++temp<argc && (char)argv[temp][0]!=argumentator){
 				args.to_calculate_mean.push_back(argv[temp]);
 			}
-			if((char)argv[temp][0]==argumentator)temp--;
+			if(temp<argc && (char)argv[temp][0]==argumentator)temp--;
 		}else if(s=="-d"){
 			while(++temp<argc && (char)argv[temp][0]!=argumentator){
 				args.to_calculate_deviation.push_back(argv[temp]);
 			}
-			if((char)argv[temp][0]==argumentator)temp--;
+			if(temp<argc && (char)argv[temp][0]==argumentator)temp--;
 		}else if(s=="-g"){
 			while(++temp<argc && (char)argv[temp][0]!=argumentator){
 				args.to_calculate_gnuplot.push_back(argv[temp]);
 			}
-			if((char)argv[temp][0]==argumentator)temp--;
+			if(temp<argc && (char)argv[temp][0]==argumentator)temp--;
 		}else {
 			cout<<CONSOL_RED_TEXT<<"argument \""<<CONSOL_CYAN_TEXT<<s
 			<<CONSOL_RED_TEXT<<"\""<< " doesn\'t mean anything."<<endl;

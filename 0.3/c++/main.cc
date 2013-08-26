@@ -6,22 +6,12 @@
 #include <map>
 #include <fstream>
 
-
+#include "natUtils.h"
 #include "arguments.h"
 #include "natparser.h"
 
 
-ostream & operator<<(ostream& out,vector<string> v){
-	for (const auto& t : v)
-		out<<t<<" ";
-	return out;
-}
 
-string double2str(double const x) {
-	std::ostringstream oss;
-	oss << x;
-	return oss.str();
-}
 
 double MySqr(double a_fVal) { 
 	return a_fVal*a_fVal; 
@@ -61,7 +51,6 @@ int main(int argc, char* argv[]) {
 		exit(0);
 	}
 
-
 	//trouver la ligne avec les noms de variable
 	data_line=natParseNext(input_file);
 	if(data_line.size()==0){
@@ -81,25 +70,35 @@ int main(int argc, char* argv[]) {
 	
 
 
-	//TODO
-	//==========================================================
-	//==========================================================
-	//==========================================================
-	//==========================================================
-	//==========================================================
-	//==========================================================
 
 
 
 
-
-	//loop
-	//lire data
-	//mettre en forme
-	//fairee les calculs
-	//ecrire dans output
 
 	while(data_line.size()==0 && input_file.good()){
+		//lire data
+		data_line=natParseNext(input_file);
+		
+		//TODO
+		//==========================================================
+		//==========================================================
+		//==========================================================
+		//mettre en forme
+		//faire les calculs sur la ligne
+		vector<double> parsed = natParseContent(data_line);
+
+		//TODO
+		//calcules pour la colonne
+
+
+		//TODO
+		//ecrire dans output proprement
+		for(size_t i=0;i<parsed.size();i++){
+			output_file<<parsed[i]<<" ";
+		}output_file<<endl;
+		//==========================================================
+		//==========================================================
+		//==========================================================
 
 	}
 
