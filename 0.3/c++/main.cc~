@@ -60,7 +60,8 @@ int main(int argc, char* argv[]) {
 	}
 
 
-	//trouver la ligne avec les noms de variable
+
+	//trouver la ligne avec les noms de vaiable
 	data_line=natParseNext(input_file);
 	if(input_file.peek() == std::ifstream::traits_type::eof()){
 		cout<<get_args().input_file_path<<" is empty."<<endl;
@@ -78,13 +79,7 @@ int main(int argc, char* argv[]) {
 	
 
 
-	//TODO
-	//==========================================================
-	//==========================================================
-	//==========================================================
-	//==========================================================
-	//==========================================================
-	//==========================================================
+
 
 
 
