@@ -60,8 +60,7 @@ int main(int argc, char* argv[]) {
 	}
 
 
-
-	//trouver la ligne avec les noms de vaiable
+	//trouver la ligne avec les noms de variable
 	data_line=natParseNext(input_file);
 	if(data_line.size()==0){
 		cout<<get_args().input_file_path<<" is empty."<<endl;
@@ -79,7 +78,13 @@ int main(int argc, char* argv[]) {
 	
 
 
-
+	//TODO
+	//==========================================================
+	//==========================================================
+	//==========================================================
+	//==========================================================
+	//==========================================================
+	//==========================================================
 
 
 
