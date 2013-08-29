@@ -5,6 +5,7 @@
 #include "muParser.h"
 #include "vector"
 #include "string"
+#include "natparser.h"
 
 
 // Function string to double
@@ -15,5 +16,6 @@ std::string DoubleToStr(double const& dbl);
 double Assign(double assigned, double value);
 
 // main program
-void natomi_core(std::string formula, std::vector<std::string> head, std::vector<double>& line);
+std::vector <size_t> calculinit(const std::vector<natInfo>& data_info, mu::Parser& p);
 
+void natomi_core(const std::vector<natInfo>& data_info, std::vector<std::string>& line, const std::vector<size_t>& formula_col, mu::Parser p, map<std::string,size_t> dataName_str2num);

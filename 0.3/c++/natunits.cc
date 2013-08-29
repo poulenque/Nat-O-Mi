@@ -3,9 +3,9 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 
-#include <muParser.h>
+//#include <muParser.h>
 
-using namespace mu;
+//using namespace mu;
 using namespace std;
 
 

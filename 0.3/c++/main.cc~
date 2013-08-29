@@ -1,3 +1,4 @@
+#include "consol_color.h"
 #include <iostream>
 #include <muParser.h>
 #include <vector>
@@ -5,25 +6,23 @@
 #include <map>
 #include <fstream>
 
-
+#include "natUtils.h"
 #include "arguments.h"
 #include "natparser.h"
+#include "natconpute.h"
 
-ostream & operator<<(ostream& out,vector<string> v){
-	for (const auto& t : v)
-		out<<t<<" ";
-	return out;
-}
 
-string double2str(double const x) {
-	std::ostringstream oss;
-	oss << x;
-	return oss.str();
-}
+
 
 double MySqr(double a_fVal) { 
 	return a_fVal*a_fVal; 
 }
+
+
+#define TEMP_EXIT_FUNCTION \
+		input_file.close();\
+		output_file.close();\
+		exit(0);
 
 
 int main(int argc, char* argv[]) {
@@ -31,8 +30,7 @@ int main(int argc, char* argv[]) {
 
 	string read_line;
 	vector<string> data_line;
-	vector<natInfo> data_header;
-	vector<string> 				dataName_num2str;
+	vector<natInfo> data_info;
 	map<string, size_t> 	dataName_str2num;
 
 
@@ -45,62 +43,77 @@ int main(int argc, char* argv[]) {
 	
 	ofstream output_file(get_args().output_file_path);
 	if(!output_file.is_open()){
-		cout<<"could not open file"<<get_args().output_file_path<< endl;
+		cout<<CONSOL_RED_TEXT<<"could not open file"<<CONSOL_CYAN_TEXT<<get_args().output_file_path<< endl;
 		exiting=true;
 	}
 	ifstream input_file(get_args().input_file_path);
 	if(!input_file.is_open()){
-		cout<<"coult not open file"<<get_args().input_file_path<<endl;
+		cout<<CONSOL_RED_TEXT<<"could not open file"<<CONSOL_CYAN_TEXT<<get_args().input_file_path<<endl;
 		exiting=true;
 	}
 	if(exiting){
-		input_file.close();
-		output_file.close();
-		exit(0);
+		TEMP_EXIT_FUNCTION
 	}
 
-
-
-	//trouver la ligne avec les noms de vaiable
+	//trouver la ligne avec les noms de variable
 	data_line=natParseNext(input_file);
-	if(input_file.peek() == std::ifstream::traits_type::eof()){
-		cout<<get_args().input_file_path<<" is empty."<<endl;
-		input_file.close();
-		output_file.close();
-		exit(0);
+	if(data_line.size()==0){
+		cout<<CONSOL_RED_TEXT<<"\""<<CONSOL_CYAN_TEXT<<get_args().input_file_path
+		<<CONSOL_RED_TEXT<<"\" is empty."<<endl;
+		TEMP_EXIT_FUNCTION
 	}
 
-	data_header=natParseHeader(data_line);
+	data_info=natParseHeader(data_line);
 
-	//num2str str2num
-	dataName_num2str=data_line;
-	for(size_t i=0;i<dataName_num2str.size();i++)
-		dataName_str2num.insert(std::pair<string,size_t>(dataName_num2str[i],i) );
+	//str2num
+	for(size_t i=0;i<data_info.size();i++)
+		dataName_str2num.insert(std::pair<string,size_t>(data_info[i].name,i) );
 	
 
 
 
 
 
+	mu::Parser muparser;
+	vector<size_t> formula_col = calculinit(data_info,muparser);
 
+	while(data_line.size()!=0 && input_file.good()){
+		//lire data
+		data_line=natParseNext(input_file);
 
+		/*if(data_line.size() != data_info.size()){
+			std::cout<< CONSOL_RED_TEXT << "The line "<< CONSOL_CYAN_TEXT <<"xxx"<<CONSOL_RED_TEXT <<" has incorrect number of columns" << std::endl;
+			exit(1);
+		}*/
 
-	//loop
-	//lire data
-	//mettre en forme
-	//fairee les calculs
-	//ecrire dans output
+		//TODO
+		//==========================================================
+		//==========================================================
+		//==========================================================
+		//mettre en forme
+		//faire les calculs sur la ligne
+		//vector<double> parsed = natParseContent(data_line);
 
-	while(data_line.size()==0 && input_file.good()){
+		//TODO
+		//calcules pour la colonne
+		natomi_core(data_info, data_line, formula_col, muparser, dataName_str2num);
+
+		//TODO
+		//ecrire dans output proprement
+		/*for(size_t i=0;i<parsed.size();i++){
+			output_file<<parsed[i]<<" ";
+		}output_file<<endl;*/
+		//==========================================================
+		//==========================================================
+		//==========================================================
 
 	}
-
+	
 	input_file.close();
 	output_file.close();
 	//====================================================
 
 
-	using namespace mu;
 
 	// try{
 	// 	double fVal = 1;

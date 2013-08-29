@@ -1,15 +1,18 @@
 #include <iostream>
 #include "natomicore.h"
 #include <muParser.h>
-using namespace mu;
+#include <boost/lexical_cast.hpp>
 
 // Function string to double
-int StrToDouble(std::string const& s)
+double StrToDouble(std::string const& s)
 {
-    std::istringstream iss(s);
-    double value;
-    if (!(iss >> value)) throw std::runtime_error("invalid double in line");
-    return value;
+	double value;
+    try {
+        value = boost::lexical_cast<double>(s);
+    } catch (boost::bad_lexical_cast const& e){
+
+    }
+	return value;
 }
 
 //Callback function
@@ -17,21 +20,48 @@ double Assign(double assigned, double value)
 { 
 	return assigned=value; 
 }
-
-void natomi_core(std::string formula,  std::vector<std::string> head, std::vector<double>& line)
+//MAin function
+std::vector <size_t> calculinit(const std::vector<natInfo>& data_info, mu::Parser& p)
 {
+	p.DefineFun("Assign",Assign);
+	std::string formula="";
+	vector <size_t> ret;
+	for(unsigned int i(0); i < data_info.size();++i)
+	{
+		if(!(data_info[i].formula.empty()))// if the formula field isnot empty
+		{
+			ret.push_back(i);				//remember the column with formula to apply
+			formula += data_info[i].formula + ",";	//write down the formula
+		}
+	}
+	p.SetExpr(formula); // set the formula expression for multiple formula evaluations
+	return ret;
+}
+
+void natomi_core(const std::vector<natInfo>& data_info, std::vector<std::string>& line, const std::vector<size_t>& formula_col, mu::Parser p, map<std::string,size_t> dataName_str2num)
+{
+
   try
   {
-    Parser p;
-	p.DefineFun("Assign",Assign);
-//  p.SetExpr("Assign("+formula+")");
-
+	double gla(0.0);
 	for(unsigned int i(0); i < line.size();i++)
-	    p.DefineVar(head[i], &line[i]); 
+	{
+		if(gla = StrToDouble(line[dataName_str2num[data_info[i].name]]))
+			p.DefineVar(data_info[i].name, &gla);
+	}
+
+
+	int nNum;
+  	mu::value_type *v = p.Eval(nNum);
+  	for (int i=0; i<nNum; ++i)
+  	{
+    	std::cout << v[i] << "\n";
+  	}
+
 
     std::cout << p.Eval() << std::endl;
   }
-  catch (Parser::exception_type &e)
+  catch (mu::Parser::exception_type &e)
   {
     std::cout << e.GetMsg() << std::endl;
   }

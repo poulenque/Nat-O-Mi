@@ -1,6 +1,5 @@
 #include "consol_color.h"
 #include <iostream>
-#include <muParser.h>
 #include <vector>
 #include <string>
 #include <map>
@@ -9,6 +8,7 @@
 #include "natUtils.h"
 #include "arguments.h"
 #include "natparser.h"
+#include "natconpute.h"
 
 
 
@@ -30,7 +30,6 @@ int main(int argc, char* argv[]) {
 	string read_line;
 	vector<string> data_line;
 	vector<natInfo> data_info;
-	vector<string> 				dataName_num2str;//might be useless
 	map<string, size_t> 	dataName_str2num;
 
 
@@ -65,51 +64,56 @@ int main(int argc, char* argv[]) {
 
 	data_info=natParseHeader(data_line);
 
-	//num2str str2num
-	dataName_num2str=data_line;
-	for(size_t i=0;i<dataName_num2str.size();i++)
-		dataName_str2num.insert(std::pair<string,size_t>(dataName_num2str[i],i) );
+	//str2num
+	for(size_t i=0;i<data_info.size();i++)
+		dataName_str2num.insert(std::pair<string,size_t>(data_info[i].name,i) );
 	
 
 
 
+	//Write the first line of the input file into the output file, which is the header
+	output_file << data_line << std::endl;
 
-
-
-
-	while(data_line.size()==0 && input_file.good()){
+	while(data_line.size()!=0 && input_file.good()){
 		//lire data
-		data_line=natParseNext(input_file);
-		
+		if(data_line.size()!=0)
+			data_line=natParseNext(input_file);
+
+		if(data_line.size() != data_info.size()){
+			std::cout<< CONSOL_RED_TEXT << "The line "<< CONSOL_CYAN_TEXT <<"xxx"<<CONSOL_RED_TEXT <<" has incorrect number of columns" << std::endl;
+			exit(1);
+		}
+
 		//TODO
 		//==========================================================
 		//==========================================================
 		//==========================================================
 		//mettre en forme
 		//faire les calculs sur la ligne
-		vector<double> parsed = natParseContent(data_line);
+		//vector<double> parsed = natParseContent(data_line);
 
 		//TODO
 		//calcules pour la colonne
+		natConPute(data_info, data_line, dataName_str2num);
 
+		//TODO
+		//calcules pour les incertitudes
+		//natDerive(data_info, data_line, dataName_str2num);
 
 		//TODO
 		//ecrire dans output proprement
-		for(size_t i=0;i<parsed.size();i++){
-			output_file<<parsed[i]<<" ";
-		}output_file<<endl;
+		output_file << data_line << std::endl;
 		//==========================================================
 		//==========================================================
 		//==========================================================
 
 	}
-
+	
 	input_file.close();
 	output_file.close();
 	//====================================================
 
 
-	using namespace mu;
 
 	// try{
 	// 	double fVal = 1;

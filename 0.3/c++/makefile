@@ -9,7 +9,7 @@ C_FLAGS += -O2
 C_FLAGS += -std=c++11
 C_FLAGS += -march=native
 
-LIBS += -lmuparser 
+LIBS += -lginac
 
 SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:%.cc=%.o)
