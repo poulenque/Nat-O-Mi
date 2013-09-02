@@ -14,12 +14,12 @@ double StrToDouble(std::string const& s)
     }
 	return value;
 }
-
+GiNaC::parser reader;
 //Main function
 GiNaC::ex natConPute(const std::string& formula, std::vector<std::string>& line, map<std::string,size_t> dataName_str2num)
 {
 	//Define the parser, symbol table and exypression to evaluate
-    GiNaC::parser reader;
+    
 	GiNaC::symtab table;
 	GiNaC::ex e = reader(formula);
 	//Get the symbol from the expression and write it down to a table
