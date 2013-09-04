@@ -19,7 +19,7 @@ double MySqr(double a_fVal) {
 }
 
 
-#define TEMP_EXIT_FUNCTION \
+#define NATOMI_TEMP_EXIT_FUNCTION \
 		input_file.close();\
 		output_file.close();\
 		exit(0);
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 		exiting=true;
 	}
 	if(exiting){
-		TEMP_EXIT_FUNCTION
+		NATOMI_TEMP_EXIT_FUNCTION
 	}
 
 	//trouver la ligne avec les noms de variable
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
 	if(data_line.size()==0){
 		cout<<CONSOL_RED_TEXT<<"\""<<CONSOL_CYAN_TEXT<<get_args().input_file_path
 		<<CONSOL_RED_TEXT<<"\" is empty."<<endl;
-		TEMP_EXIT_FUNCTION
+		NATOMI_TEMP_EXIT_FUNCTION
 	}
 
 	data_info=natParseHeader(data_line);
@@ -81,8 +81,8 @@ int main(int argc, char* argv[]) {
 	
 	//Here is the error init computation
 	//natDerive("U*I_", "U", 2);
-	unsigned int nheader(data_info.size());
-	for(unsigned int i(0); i < nheader; i++)
+	size_t nheader(data_info.size());
+	for(size_t i(0); i < nheader; i++)
 	{	
 		if(data_info[i].error == "*")
 		{

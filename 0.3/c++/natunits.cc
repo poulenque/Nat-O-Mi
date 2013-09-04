@@ -134,7 +134,7 @@ ostream& operator<<(ostream& out, Unit & unit){
 Unit operator+(Unit const & a,Unit const & b){
 	if (a.p!=b.p)return unit_error;
 	if (a.q!=b.q)return unit_error;
-	if (a.factor!=b.factor) return unit_error_factor;
+	if (a.factor/b.factor<1.0001 && a.factor/b.factor>0.9999) return unit_error_factor;
 	//should be simplified already
 	return a;
 }
@@ -178,7 +178,7 @@ Unit operator/(Unit const & a,Unit const & b){
 }
 
 bool operator==(Unit const & a,Unit const &b){
-	if(a.p==b.p && a.q==b.q && a.factor==b.factor)return true;
+	if(a.p==b.p && a.q==b.q && a.factor/b.factor<1.0001 && a.factor/b.factor>0.9999)return true;
 	return false;
 }
 

@@ -4,14 +4,12 @@
 #include <map>
 #include <string>
 
-using namespace std;
-
 typedef struct Unit{
 private:
 	int p;
 	int q;
 	double factor;
-	bool error	;
+	int error	;
 	int meter	;
 	int g 		;
 	int second 	;
@@ -22,8 +20,8 @@ private:
 	int special	;
 public:
 	Unit(int i=1, int j=1,double f=1);
-	Unit(string name);
-	string getname();
+	Unit(std::string name);
+	std::string getname();
 	friend Unit operator+ (Unit const & a ,Unit const & b);
 	friend Unit operator- (Unit const & a ,Unit const & b);
 	friend Unit operator* (Unit const & a ,Unit const & b);
@@ -41,12 +39,12 @@ typedef struct NatDouble{
 
 void natUnitInit();
 
-Unit str2unit(string name);
-string unit2str(Unit name);
+Unit str2unit(std::string name);
+std::string unit2str(Unit name);
 
 void natunitSimplify(Unit& unit);
 
-ostream& operator<<(ostream& out, Unit & unit);
+std::ostream& operator<<(std::ostream& out, Unit & unit);
 
 //on veut :
 //

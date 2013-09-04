@@ -16,7 +16,7 @@ double StrToDouble(std::string const& s)
 }
 
 //Main function
-GiNaC::ex natConPute(const std::string& formula, std::vector<std::string>& line, map<std::string,size_t> dataName_str2num)
+GiNaC::ex natConPute(const std::string& formula, std::vector<std::string>& line, std::map<std::string,size_t> dataName_str2num)
 {
 	//Define the parser, symbol table and exypression to evaluate
     GiNaC::parser reader;
@@ -58,7 +58,7 @@ GiNaC::ex natDerive(const std::string& formula, const std::string& var, unsigned
 	return e.diff(GiNaC::ex_to<GiNaC::symbol>(table[var]), nth);
 }
 
-GiNaC::ex natUncerError(const std::string& formula, const std::vector<natInfo>& data_info, map<std::string,size_t> dataName_str2num)
+GiNaC::ex natUncerError(const std::string& formula, const std::vector<natInfo>& data_info, std::map<std::string,size_t> dataName_str2num)
 {
 
 	GiNaC::parser reader;

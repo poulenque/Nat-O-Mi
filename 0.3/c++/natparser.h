@@ -6,21 +6,20 @@
 #include <fstream>
 #include "natunits.h"
 
-using namespace std;
 
 typedef struct natHeader natHeader;
 
 struct natInfo{
 	natInfo();
-	string name;
+	std::string name;
 	Unit unit;
-	string error;
+	std::string error;
 	double error_value;
-	string formula;
+	std::string formula;
 };
 
-vector<string> natParseNext(ifstream& input_file);
-vector<natInfo> natParseHeader(vector<string> input);
-vector<double> natParseContent(vector<string> input);
+std::vector<std::string> natParseNext(std::ifstream& input_file);
+std::vector<natInfo> natParseHeader(std::vector<std::string> input);
+std::vector<double> natParseContent(std::vector<std::string> input);
 
 #endif
