@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
+#include <string.h>
 
 #define Nat_O_Mi_VERSION__ "0.3"
 

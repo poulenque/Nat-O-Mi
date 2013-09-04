@@ -5,15 +5,13 @@
 #include <map>
 #include <fstream>
 
-#include "natUtils.h"
+#include "natomi.h"
 #include "arguments.h"
-#include "natparser.h"
-#include "natconpute.h"
 
 #include <sstream>
 #include <boost/lexical_cast.hpp>
 
-
+#include <ginac/ginac.h>
 
 
 double MySqr(double a_fVal) { 
@@ -33,7 +31,7 @@ int main(int argc, char* argv[]) {
 
 	using namespace std;
 
-	GiNaC::Digits = 1.0; //Defines the number of digits ofr GiNaC expressions
+	//GiNaC::Digits = 1.0; //Defines the number of digits ofr GiNaC expressions
 	string read_line;
 	vector<string> data_line;
 	vector<natInfo> data_info;

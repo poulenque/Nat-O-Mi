@@ -1,7 +1,5 @@
 #include "consol_color.h"
 #include "arguments.h"
-#include <iostream>
-#include <string.h>
 
 static Args args=Args();
 

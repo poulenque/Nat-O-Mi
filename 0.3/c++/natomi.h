@@ -3,6 +3,8 @@
 
 #include "natUtils.h"
 #include "natparser.h"
+#include "natconpute.h"
+
 
 void natinit();
 
