@@ -29,7 +29,7 @@ GiNaC::ex natConPute(const std::string& formula, std::vector<std::string>& line,
 	for(GiNaC::symtab::iterator it = table.begin();
 		it != table.end(); ++it)
 	{
-		unsigned int id(dataName_str2num[it->first]);
+		size_t id(dataName_str2num[it->first]);
 
 		if(!std::isnan(StrToDouble(line[id])))
 			e = e.subs(it->second == StrToDouble(line[id]));		
@@ -72,7 +72,7 @@ GiNaC::ex natUncerError(const std::string& formula, const std::vector<natInfo>& 
 	for(GiNaC::symtab::const_iterator it = table.begin();
 		it != table.end(); ++it)
 	{
-		unsigned int id(dataName_str2num[it->first]);
+		size_t id(dataName_str2num[it->first]);
 		
 		/*std::cout << "The derivative of " << e << " with respect to " << it->first << " is: ";
 		std::cout << e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second)) << "." << std::endl;
@@ -80,7 +80,8 @@ GiNaC::ex natUncerError(const std::string& formula, const std::vector<natInfo>& 
 		std::cout << "[(d" <<  data_info[id].name << "/d" << it->second << ")*error";
 		std::cout << data_info[id].name << "]^2= ";
 		std::cout << pow(e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::ex(StrToDouble(data_info[id].error)),2) << std::endl;*/
-		sum += pow(e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::ex(StrToDouble(data_info[id].error)),2);
+
+		sum += pow(e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(data_info[id].error),2);
 	}
 	return sqrt(sum);//uncertainties formula
 }

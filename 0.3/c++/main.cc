@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
 		}	
 	}
 
-	//Write the first line of the input file into the output file, which is the header
+	//This doesnt write the corret header!!!! problem
 	output_file << data_line << std::endl;
 
 	while(data_line.size()!=0 && input_file.good())

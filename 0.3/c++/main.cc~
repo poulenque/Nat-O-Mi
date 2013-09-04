@@ -30,7 +30,7 @@ double MySqr(double a_fVal) {
 int main(int argc, char* argv[]) {
 	using namespace std;
 
-	GiNaC::Digits = 100; //Defines the number of digits ofr GiNaC expressions
+	GiNaC::Digits = 1.0; //Defines the number of digits ofr GiNaC expressions
 	string read_line;
 	vector<string> data_line;
 	vector<natInfo> data_info;
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
 		}	
 	}
 
-	//Write the first line of the input file into the output file, which is the header
+	//This doesnt write the corret header!!!! problem
 	output_file << data_line << std::endl;
 
 	while(data_line.size()!=0 && input_file.good())
@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
 		if(data_line.size()!=0)
 			data_line=natParseNext(input_file);
 
-		if(data_line.size() != nheader)// check if there is no blanks from the original header size
+		if(data_line.size() < nheader)// check if there is no blanks from the original header size
 		{
 			std::cout<< CONSOL_RED_TEXT  << "The line "
 					<< CONSOL_CYAN_TEXT <<"xxx"
