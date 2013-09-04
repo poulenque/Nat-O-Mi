@@ -54,15 +54,15 @@ HEADERS =
 PROG = Nat-O-Mi
 
 all:$(OBJECTS)
-	$(CC) $(LIBS) $(OBJECTS) -o $(PROG)
+$(CC) $(C_FLAGS) $(LIBS) $(OBJECTS) -o $(PROG)
 
 
 %.o: %.cc
-	$(CC) $(HEADERS) $(C_FLAGS) -c $< -o $@
+$(CC) $(HEADERS) $(C_FLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS)
-	cd engine; make clean
+rm -f $(OBJECTS)
+cd engine; make clean
 
 mrproper:
-	rm -f $(PROG) $(OBJECTS)
+rm -f $(PROG) $(OBJECTS)
