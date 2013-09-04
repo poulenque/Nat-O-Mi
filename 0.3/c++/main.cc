@@ -1,6 +1,5 @@
 #include "consol_color.h"
 #include <iostream>
-#include <muParser.h>
 #include <vector>
 #include <string>
 #include <map>
@@ -9,6 +8,10 @@
 #include "natUtils.h"
 #include "arguments.h"
 #include "natparser.h"
+#include "natconpute.h"
+
+#include <sstream>
+#include <boost/lexical_cast.hpp>
 
 
 
@@ -25,12 +28,15 @@ double MySqr(double a_fVal) {
 
 
 int main(int argc, char* argv[]) {
+	
+	natinit();
+
 	using namespace std;
 
+	GiNaC::Digits = 1.0; //Defines the number of digits ofr GiNaC expressions
 	string read_line;
 	vector<string> data_line;
 	vector<natInfo> data_info;
-	vector<string> 				dataName_num2str;//might be useless
 	map<string, size_t> 	dataName_str2num;
 
 
@@ -65,71 +71,91 @@ int main(int argc, char* argv[]) {
 
 	data_info=natParseHeader(data_line);
 
-	//num2str str2num
-	dataName_num2str=data_line;
-	for(size_t i=0;i<dataName_num2str.size();i++)
-		dataName_str2num.insert(std::pair<string,size_t>(dataName_num2str[i],i) );
+	//str2num
+	for(size_t i=0;i<data_info.size();i++)
+		dataName_str2num.insert(std::pair<string,size_t>(data_info[i].name,i) );
 	
 
 
 
+	//TODO
+	//Init of data_line computing
+	
+	//Here is the error init computation
+	//natDerive("U*I_", "U", 2);
+	unsigned int nheader(data_info.size());
+	for(unsigned int i(0); i < nheader; i++)
+	{	
+		if(data_info[i].error == "*")
+		{
+			data_info[i].error = data_info[i].name+"_error";
+			natInfo new_column;
+			new_column.error = ".";
+			new_column.unit = data_info[i].unit;
+			new_column.formula = boost::lexical_cast<std::string>(natUncerError(data_info[i].formula,data_info,dataName_str2num));
+			new_column.name = data_info[i].error;
+			data_info.push_back(new_column);
+			data_line.push_back(new_column.name+"[UNIT GLA]"+"["+new_column.formula+"]");
+		}	
+	}
 
+	//This doesnt write the corret header!!!! problem
+	output_file << data_line << std::endl;
 
-
-
-	while(data_line.size()==0 && input_file.good()){
+	while(data_line.size()!=0 && input_file.good())
+	{
 		//lire data
-		data_line=natParseNext(input_file);
-		
+		if(data_line.size()!=0)
+			data_line=natParseNext(input_file);
+
+		if(data_line.size() != nheader)// check if there is no blanks from the original header size
+		{
+			std::cout<< CONSOL_RED_TEXT  << "The line "
+					<< CONSOL_CYAN_TEXT <<"xxx"
+					<<CONSOL_RED_TEXT <<" has incorrect number of columns" 
+					<< std::endl;
+			exit(1);
+		}
+
 		//TODO
 		//==========================================================
 		//==========================================================
 		//==========================================================
 		//mettre en forme
 		//faire les calculs sur la ligne
-		vector<double> parsed = natParseContent(data_line);
+		//vector<double> parsed = natParseContent(data_line);
 
 		//TODO
 		//calcules pour la colonne
+		for(unsigned int i(0); i < data_info.size(); i++)
+		{	
+			if(!data_info[i].formula.empty())
+			{	
+				GiNaC::ex result(natConPute(data_info[i].formula,data_line,dataName_str2num));
 
+				//Keep the seme amount of column but computing the good values
+				if (GiNaC::is_a<GiNaC::numeric>(result) && i < nheader)
+					data_line[i] = double2str(GiNaC::ex_to<GiNaC::numeric>(result).to_double()); //STUPID ????
+
+				//Append the column
+				else if(i >= nheader)
+					data_line.push_back(double2str(GiNaC::ex_to<GiNaC::numeric>(result).to_double())); //STUPID ????
+			}
+		}
 
 		//TODO
 		//ecrire dans output proprement
-		for(size_t i=0;i<parsed.size();i++){
-			output_file<<parsed[i]<<" ";
-		}output_file<<endl;
+		output_file << data_line << std::endl;
 		//==========================================================
 		//==========================================================
 		//==========================================================
 
 	}
 
+	
 	input_file.close();
 	output_file.close();
-	//====================================================
-
-
-	using namespace mu;
-
-	// try{
-	// 	double fVal = 1;
-	// 	double fValb = 1;
-	// 	Parser p;
-	// 	p.DefineVar("a", &fVal); 
-	// 	p.DefineVar("b", &fValb); 
-	// 	p.DefineFun("pouet", MySqr); 
-	// 	p.SetExpr("b = pouet(a)*_pi+min(10,a)");
-
-	// 	for (std::size_t a=0; a<10; ++a){
-	// 		fVal = a;  // Change value of variable a
-	// 		fValb = a;
-	// 		std::cout << p.Eval() << " " << fValb<< std::endl;
-	// 	}
-	// }
-	// catch (Parser::exception_type &e){
-	// 	std::cout << e.GetMsg() << std::endl;
-	// }
-	
+	//====================================================	
 	return 0;
 }
 
