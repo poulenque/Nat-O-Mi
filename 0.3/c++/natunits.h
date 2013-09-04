@@ -6,8 +6,6 @@
 
 typedef struct Unit{
 private:
-	int p;
-	int q;
 	double factor;
 	int error	;
 	int meter	;
@@ -19,7 +17,7 @@ private:
 	int candela	;
 	int special	;
 public:
-	Unit(int i=1, int j=1,double f=1);
+	Unit();
 	Unit(std::string name);
 	std::string getname();
 	friend Unit operator+ (Unit const & a ,Unit const & b);
@@ -29,6 +27,8 @@ public:
 	friend bool operator==(Unit const & a ,Unit const & b);
 	friend Unit operator* (Unit const & a ,double const & factor_double);
 	friend Unit operator* (double const & factor_double, Unit const & a);
+	friend std::string unit2str(Unit name);
+	friend Unit str2unit(std::string name);
 }Unit;
 
 typedef struct NatDouble{
@@ -39,10 +39,8 @@ typedef struct NatDouble{
 
 void natUnitInit();
 
-Unit str2unit(std::string name);
 std::string unit2str(Unit name);
-
-void natunitSimplify(Unit& unit);
+Unit str2unit(std::string name);
 
 std::ostream& operator<<(std::ostream& out, Unit & unit);
 

@@ -1,3 +1,4 @@
+
 #include "consol_color.h"
 #include <iostream>
 #include <vector>
@@ -26,7 +27,7 @@ double MySqr(double a_fVal) {
 
 
 int main(int argc, char* argv[]) {
-	
+
 	natinit();
 
 	using namespace std;
@@ -60,8 +61,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	//trouver la ligne avec les noms de variable
-	data_line=natParseNext(input_file);
-	if(data_line.size()==0){
+	if(!natParseNext(input_file,data_line)){
 		cout<<CONSOL_RED_TEXT<<"\""<<CONSOL_CYAN_TEXT<<get_args().input_file_path
 		<<CONSOL_RED_TEXT<<"\" is empty."<<endl;
 		NATOMI_TEMP_EXIT_FUNCTION
@@ -100,18 +100,15 @@ int main(int argc, char* argv[]) {
 	//This doesnt write the corret header!!!! problem
 	output_file << data_line << std::endl;
 
-	while(data_line.size()!=0 && input_file.good())
+	while(natParseNext(input_file,data_line) && input_file.good())
 	{
-		//lire data
-		if(data_line.size()!=0)
-			data_line=natParseNext(input_file);
 
 		if(data_line.size() != nheader)// check if there is no blanks from the original header size
 		{
-			std::cout<< CONSOL_RED_TEXT  << "The line "
-					<< CONSOL_CYAN_TEXT <<"xxx"
-					<<CONSOL_RED_TEXT <<" has incorrect number of columns" 
-					<< std::endl;
+			std::cout 	<< CONSOL_RED_TEXT  << "The line "
+						<< CONSOL_CYAN_TEXT <<"xxx"
+						<<CONSOL_RED_TEXT <<" has incorrect number of columns" 
+						<< std::endl;
 			exit(1);
 		}
 
@@ -156,7 +153,6 @@ int main(int argc, char* argv[]) {
 	//====================================================	
 	return 0;
 }
-
 
 
 

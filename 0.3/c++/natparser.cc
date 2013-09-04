@@ -55,8 +55,7 @@ vector<string> natParse_str2vector(string read_line){
 
 //TODO
 //signal if commentline !
-vector<string> natParseNext(ifstream& input_file){
-	vector<string> output;
+bool natParseNext(ifstream& input_file,vector<string>& output){
 	string read_line;
 
 	while(output.size()==0 && input_file.good()){
@@ -69,8 +68,9 @@ vector<string> natParseNext(ifstream& input_file){
 			output=vector<string>();
 		}
 	}
-
-	return output;
+	if(output.size())
+		return true;
+	return false;
 }
 
 
