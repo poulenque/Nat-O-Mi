@@ -18,7 +18,7 @@ struct natInfo{
 	std::string formula;
 };
 
-std::vector<std::string> natParseNext(std::ifstream& input_file);
+bool natParseNext(std::ifstream& input_file,std::vector<std::string>& output);
 std::vector<natInfo> natParseHeader(std::vector<std::string> input);
 std::vector<double> natParseContent(std::vector<std::string> input);
 

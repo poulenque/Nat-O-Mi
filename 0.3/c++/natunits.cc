@@ -2,29 +2,39 @@
 #include <algorithm>
 #include <iostream>
 #include <boost/algorithm/string.hpp>
+#include "natUtils.h"
 
 #include <vector>
 
 using namespace std;
 
-static vector<int> const prime={2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71};
-
-Unit const unit_error	= Unit(0,0,0);
-Unit const unit_error_factor= Unit(0,0,1);
-Unit const unit_none 	= Unit(1,1);
-Unit const unit_meter	= Unit(prime[0],1);
-Unit const unit_g 		= Unit(prime[1],1);
-Unit const unit_second 	= Unit(prime[2],1);
-Unit const unit_Ampere 	= Unit(prime[3],1);
-Unit const unit_Kelvin 	= Unit(prime[4],1);
-Unit const unit_mol 	= Unit(prime[5],1);
-Unit const unit_candela = Unit(prime[6],1);
-Unit const unit_special = Unit{prime[7],1};
+Unit unit_error		;
+Unit unit_none 		;
+Unit unit_meter		;
+Unit unit_g 		;
+Unit unit_second 	;
+Unit unit_Ampere 	;
+Unit unit_Kelvin 	;
+Unit unit_mol 		;
+Unit unit_candela 	;
+Unit unit_special 	;
 
 static vector<vector<string> >prefix;
 static vector<double> prefix_value;
 
 void natUnitInit(){
+
+			unit_error		= Unit("error");
+			unit_none 		= Unit("none");
+			unit_meter		= Unit("meter");
+			unit_g 			= Unit("gram");
+			unit_second 	= Unit("second");
+			unit_Ampere 	= Unit("ampere");
+			unit_Kelvin 	= Unit("Kelvin");
+			unit_mol 		= Unit("mol");
+			unit_candela 	= Unit("candela");
+			unit_special 	= Unit("special");//Material etc...
+
 			prefix.push_back({"Y","yotta"});
 			prefix_value.push_back(1e24);
 
@@ -94,11 +104,9 @@ void natUnitInit(){
 			prefix_value.push_back(1e-24);
 }
 
-Unit::Unit(int i, int j,double f):
-p(i),
-q(j),
-factor(f),
-error(false),
+Unit::Unit():
+factor(1),
+error(0),
 meter(0),
 g(0),
 second(0),
@@ -106,14 +114,13 @@ Ampere(0),
 Kelvin(0),
 mol(0),
 candela(0),
-special(0){
-	natunitSimplify(*this);
-}
+special(0)
+{}
+
+
 Unit::Unit(string name):
-p(),
-q(),
 factor(),
-error(false),
+error(),
 meter(),
 g(),
 second(),
@@ -132,11 +139,9 @@ ostream& operator<<(ostream& out, Unit & unit){
 
 
 Unit operator+(Unit const & a,Unit const & b){
-	if (a.p!=b.p)return unit_error;
-	if (a.q!=b.q)return unit_error;
-	if (a.factor/b.factor<1.0001 && a.factor/b.factor>0.9999) return unit_error_factor;
-	//should be simplified already
-	return a;
+	if(a.error || b.error) return unit_error;
+	if(a==b)return a;
+	return unit_error;
 }
 
 Unit operator-(Unit const & a,Unit const & b){
@@ -145,10 +150,7 @@ Unit operator-(Unit const & a,Unit const & b){
 
 Unit operator*(Unit const & a,Unit const & b){
 	Unit ret(a);
-	ret.p*=b.p;
-	ret.q*=b.q;
 	ret.factor*=b.factor;
-	natunitSimplify(ret);
 	ret.meter 	+=	b.meter;
 	ret.g 		+=		b.g;
 	ret.second 	+=	b.second;
@@ -162,10 +164,7 @@ Unit operator*(Unit const & a,Unit const & b){
 
 Unit operator/(Unit const & a,Unit const & b){
 	Unit ret(a);
-	ret.p*=b.q;
-	ret.q*=b.p;
 	ret.factor/=b.factor;
-	natunitSimplify(ret);
 	ret.meter 	-=	b.meter;
 	ret.g 		-=	b.g;
 	ret.second 	-=	b.second;
@@ -178,16 +177,29 @@ Unit operator/(Unit const & a,Unit const & b){
 }
 
 bool operator==(Unit const & a,Unit const &b){
-	if(a.p==b.p && a.q==b.q && a.factor/b.factor<1.0001 && a.factor/b.factor>0.9999)return true;
-	return false;
+	if(	a.meter		!= b.meter ||
+		a.g			!= b.g ||
+		a.second	!= b.second ||
+		a.Ampere	!= b.Ampere ||
+		a.Kelvin	!= b.Kelvin ||
+		a.mol		!= b.mol ||
+		a.candela	!= b.candela ||
+		a.special	!= b.special)
+		return false;
+	
+	double d=a.factor/b.factor;
+	if (d>1.0001 || d<0.9999)
+		return false;
+	return true;
+}
+
+bool operator!=(Unit const & a,Unit const &b){
+	return !(a==b);
 }
 
 Unit operator*(Unit const & a,double const & factor_double){
 	Unit ret(a);
-	//this operation wont change the unit part,
-	//so we don't need to simplify
 	ret.factor*=factor_double;
-	//natunitSimplify(ret);
 	return ret;
 }
 
@@ -195,7 +207,7 @@ Unit operator*(double const & factor_double, Unit const & a){
 	return a*factor_double;
 }
 
-Unit str2unit_simple_suffixe(string name);
+Unit str2unit_simple_suffixe(const string & name);
 
 //name is modified, prefix is removed if understood
 Unit str2unit_simple_prefix(string & name){
@@ -222,7 +234,7 @@ Unit str2unit_simple_prefix(string & name){
 	return unit_none;
 }
 
-Unit str2unit_simple_suffixe(string name){
+Unit str2unit_simple_suffixe(const string & name){
 	string name_lower=name;
 	boost::algorithm::to_lower(name_lower);
 	//==========
@@ -275,10 +287,12 @@ Unit str2unit_simple_suffixe(string name){
 }
 
 Unit str2unit_simple(string name){
-
-	//prefix : name will be modified, 
+	Unit ret=str2unit_simple_suffixe(name);
+	if(ret!=unit_error){
+		return ret;
+	}
+	//prefix : name will be modified
 	Unit factor = str2unit_simple_prefix(name);
-
 	return factor*str2unit_simple_suffixe(name);
 }
 
@@ -289,29 +303,74 @@ Unit str2unit_simple(string name){
 //TODO
 Unit str2unit(string name){
 	Unit ret;
+	if(name=="none"){
+		ret.factor=1;
+		ret.error=0;
+		ret.meter=0;
+		ret.g=0;
+		ret.second=0;
+		ret.Ampere=0;
+		ret.Kelvin=0;
+		ret.mol=0;
+		ret.candela=0;
+		ret.special=0;
+	}else if(name=="error"){
+		ret.factor=0;
+		ret.error=1;
+		ret.meter=0;
+		ret.g=0;
+		ret.second=0;
+		ret.Ampere=0;
+		ret.Kelvin=0;
+		ret.mol=0;
+		ret.candela=0;
+		ret.special=0;
+	}else if(name=="error_factor"){
+		ret.factor=1;
+		ret.error=1;
+		ret.meter=0;
+		ret.g=0;
+		ret.second=0;
+		ret.Ampere=0;
+		ret.Kelvin=0;
+		ret.mol=0;
+		ret.candela=0;
+		ret.special=0;
+	}
 	//=======
 	//TODO
 	//NEED A PARSER
 	//=======
-	natunitSimplify(ret);
 	return ret;
 }
 
 string unit2str(Unit unit){
-	//====
-	//TODO
-	//====
-	string s="TODO (unit2str)";
+
+	if(unit.error)
+		return "UNIT_ERROR";
+
+	string s;
+
+	s+=double2str(unit.factor);
+
+	if(unit.meter)
+		s+="meter^{"+double2str(unit.meter)+"}";
+	if(unit.g)
+		s+="gram^{"+double2str(unit.meter)+"}";
+	if(unit.second)
+		s+="second^{"+double2str(unit.meter)+"}";
+	if(unit.Ampere)
+		s+="Ampere^{"+double2str(unit.meter)+"}";
+	if(unit.Kelvin)
+		s+="Kelvin^{"+double2str(unit.meter)+"}";
+	if(unit.mol)
+		s+="mol^{"+double2str(unit.meter)+"}";
+	if(unit.candela)
+		s+="candela^{"+double2str(unit.meter)+"}";
+	if(unit.special)
+		s+="special^{"+double2str(unit.meter)+"}";
+
 	return s;
 }
-
-void natunitSimplify(Unit& unit){
-	//====
-	//TODO
-	//====
-}
-
-
-
 
 
