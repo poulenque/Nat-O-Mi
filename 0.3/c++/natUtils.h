@@ -5,10 +5,9 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
 
-ostream & operator<<(ostream& out,vector<string> v);
-string double2str(double const x);
-double str2double( const string s );
+std::ostream & operator<<(std::ostream& out,std::vector<std::string> v);
+std::string double2str(double const x);
+double str2double( const std::string s );
 
 #endif

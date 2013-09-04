@@ -7,7 +7,6 @@
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 
-using namespace boost;
 
 const string commentSymbol = "#";
 
@@ -24,8 +23,8 @@ const string commentSymbol = "#";
 vector<string> natParse_str2vector(string read_line){
 	vector<string> v;
 
-	char_separator<char> sep(" \t");
-	tokenizer<char_separator<char>> tokens(read_line, sep);
+	boost::char_separator<char> sep(" \t");
+	boost::tokenizer<boost::char_separator<char>> tokens(read_line, sep);
 
 	bool inside=false;
 
@@ -162,6 +161,7 @@ vector<natInfo> natParseHeader(vector<string> input){
 
 
 
+//using namespace boost;
 
 
 

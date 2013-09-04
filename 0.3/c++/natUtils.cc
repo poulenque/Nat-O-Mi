@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+using namespace std;
+
 ostream & operator<<(ostream& out,vector<string> v){
 	for (const auto& t : v)
 		out<<t<<" ";
@@ -18,6 +20,8 @@ double str2double( const string s ) {
 	std::istringstream i(s);
 	double x;
 	if (!(i >> x))
-		return 0;
+		std::cout<<"str2double failed\n";
+		//TODO ERROR
+//		return 0;
 	return x;
 } 
