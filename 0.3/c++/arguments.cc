@@ -3,11 +3,13 @@
 #include <iostream>
 #include <string.h>
 
-static Args args;
+static Args args=Args();
 
 Args get_args(){
 	return args;
 }
+
+Args::Args():input_file_path(),output_file_path(),formula(),to_calculate_mean(),to_calculate_deviation(),to_calculate_gnuplot(){}
 
 void process_args(int argc, char* argv[]){
 

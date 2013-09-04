@@ -11,6 +11,7 @@ using namespace std;
 typedef struct Args Args; 
 
 struct Args{
+	Args();
 	string input_file_path;
 	string output_file_path;
 	string formula;

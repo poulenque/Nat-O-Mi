@@ -75,6 +75,8 @@ vector<string> natParseNext(ifstream& input_file){
 }
 
 
+natInfo::natInfo():name(),unit(),error(),formula() {}
+
 
 //TODO
 //

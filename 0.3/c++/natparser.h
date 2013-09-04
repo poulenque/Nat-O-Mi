@@ -11,9 +11,11 @@ using namespace std;
 typedef struct natHeader natHeader;
 
 struct natInfo{
+	natInfo();
 	string name;
 	Unit unit;
 	string error;
+	double error_value;
 	string formula;
 };
 
