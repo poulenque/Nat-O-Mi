@@ -71,7 +71,6 @@ all:$(OBJECTS)
 
 clean:
 	rm -f $(OBJECTS)
-	cd engine; make clean
 
 mrproper:
 	rm -f $(PROG) $(OBJECTS)
