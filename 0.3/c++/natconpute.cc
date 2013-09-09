@@ -58,7 +58,7 @@ GiNaC::ex natDerive(const std::string& formula, const std::string& var, unsigned
 	return e.diff(GiNaC::ex_to<GiNaC::symbol>(table[var]), nth);
 }
 
-GiNaC::ex natUncerError(const std::string& formula, const std::vector<natInfo>& data_info, std::map<std::string,size_t> dataName_str2num)
+GiNaC::ex natUncerError(const std::string& formula, const std::vector<NatInfo>& data_info, std::map<std::string,size_t> dataName_str2num)
 {
 
 	GiNaC::parser reader;

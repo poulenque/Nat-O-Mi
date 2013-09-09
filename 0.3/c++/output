@@ -1,1 +1,1 @@
-J[A][*][sin(VolumeI)-atan(Temps)] U[V][*][Temps^2+J] Temps[s][3] VolumeH[L][3] VolumeI[L][1] Faraday[C][1.0] J_error[UNIT GLA][sqrt(1^2*cos(VolumeI)^2+(1+Temps^2)^(-2)*3^2)] U_error[UNIT GLA][sqrt(J_error^2+4*3^2*Temps^2)] 
+J[A][*][sin(VolumeI)-atan(Temps)]] U[V][*][Temps^2+J] Temps[s][3] VolumeH[L][3] VolumeI[L][1] Faraday[C][1.0] J_error[UNIT GLA][sqrt(3^2*(1+Temps^2)^(-2)+1^2*cos(VolumeI)^2)] U_error[UNIT GLA][sqrt(4*3^2*Temps^2+J_error^2)] 

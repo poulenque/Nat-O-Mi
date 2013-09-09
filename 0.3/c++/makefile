@@ -51,6 +51,8 @@ C_FLAGS += -march=native
 
 # LIBS += -lstdc++
 LIBS += -lginac
+LIBS += -lyaml-cpp
+LIBS += -lboost_program_options
 # LIBS += -L ginac
 #LIBS += -L muparser 
 

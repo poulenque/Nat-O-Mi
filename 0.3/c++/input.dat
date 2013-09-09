@@ -5,7 +5,7 @@
 ###
 # test
       
-J[A][*][sin(VolumeI)-atan(Temps)] U[ V ][*][Temps^2+J] 	Temps[s][3] 	VolumeH[L][3] 	VolumeI[L][1] 	Faraday[C][1.0]
+J[A][*][sin(VolumeI)-atan(Temps)]] U[ V ][*][Temps^2+J] 	Temps[s][3] 	VolumeH[L][3] 	VolumeI[L][1] 	Faraday[C][1.0]
        
   
 0.9 	1.0 			2.1				1.2 			0.9				1.0 			

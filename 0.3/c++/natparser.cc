@@ -74,7 +74,7 @@ bool natParseNext(ifstream& input_file,vector<string>& output){
 }
 
 
-natInfo::natInfo():name(),unit(),error(),formula() {}
+NatInfo::NatInfo():name(),unit(),error(),formula() {}
 
 
 //TODO
@@ -89,15 +89,15 @@ natInfo::natInfo():name(),unit(),error(),formula() {}
 
 
 
-vector<natInfo> natParseHeader(vector<string> input){
+vector<NatInfo> natParseHeader(vector<string> input){
 
 	cout<<CONSOL_LIGHTGRAY_TEXT
 	<<"! HEADER PARSE !"<<endl
 	<<"^^^^^^^^^^^^^^^^"<<endl;
 
-	vector<natInfo> c;
+	vector<NatInfo> c;
 	for(auto & t:input){
-		natInfo n;
+		NatInfo n;
 
 		size_t i=0;
 		while(i<t.size() && t[i]!='['){
@@ -108,7 +108,7 @@ vector<natInfo> natParseHeader(vector<string> input){
 		//=======================
 		if(i>=t.size()){
 			cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<CONSOL_RED_TEXT<<"OMG you can't be a physicist ! \""<<CONSOL_CYAN_TEXT<< n.name
-			<<CONSOL_RED_TEXT<<"\"\'s"<<" Unit are missing !!! are you mad ?"<<endl;
+			<<CONSOL_RED_TEXT<<"\"\'s"<<" Unit are missing !!! are you mad ?\n"<<CONSOL_NORMAL_TEXT;
 			exit(0);//<-- whoa this is hardcore ! But no unit = kill yourself.
 		}
 		if(t[i]=='['){
@@ -125,7 +125,7 @@ vector<natInfo> natParseHeader(vector<string> input){
 		//=======================
 		if(i>=t.size()){
 			cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<CONSOL_RED_TEXT<<"No error ?! Are you kidding me ?\""<<CONSOL_CYAN_TEXT<< n.name
-			<<CONSOL_RED_TEXT<<"\"\'s"<<" error estimation is missing !!!"<<endl;
+			<<CONSOL_RED_TEXT<<"\"\'s"<<" error estimation is missing !!!\n"<<CONSOL_NORMAL_TEXT;
 			exit(0);//<-- whoa this is hardcore ! But how could you mesure something with no error ? HOW ???
 		}
 		if(i<t.size() && t[i]=='['){
