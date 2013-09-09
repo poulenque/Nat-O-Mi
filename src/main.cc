@@ -15,6 +15,7 @@
 
 #include <ginac/ginac.h>
 
+#define NATOMI_VERSION 0.31
 
 double MySqr(double a_fVal) { 
 	return a_fVal*a_fVal; 
@@ -34,16 +35,25 @@ int main(int argc, char* argv[]) {
 	boost::program_options::options_description desc("Options");
 	vector<string> input;
 	desc.add_options()
-		("help,h", "produce help message")
-		("input,i",  boost::program_options::value< vector<string> >(&input), "input file")
+		("help,h"   , "produce help message")
+		("input,i"  ,  boost::program_options::value< vector<string> >(&input), "input file")
+		("version,v", "show version")
 	;
 
 	boost::program_options::variables_map vm;
-	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+	// try{
+		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
+	// }catch(e){
+	// 	cout<<"prout"<<endl;
+	// }
 	boost::program_options::notify(vm);
 
 	if (vm.count("help")) {
 		cout << desc << "\n";
+		return 1;
+	}
+	if (vm.count("version")) {
+		cout << NATOMI_VERSION << "\n";
 		return 1;
 	}
 
@@ -53,6 +63,9 @@ int main(int argc, char* argv[]) {
 	// } else {
 	// 	cout << "Compression level was not set.\n";
 	// }
+
+
+
 
 	natinit();
 
