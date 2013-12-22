@@ -5,7 +5,7 @@
 ifeq ($(shell which gccmechant >/dev/null 2>&1 && echo true), true)
 	CC = gccmechant
 else
-	CC = gcc
+	CC = g++
 	C_FLAGS += -W -Wall -ansi -pedantic
 	C_FLAGS += -Wall -Wextra -Wwrite-strings -Winit-self -Wcast-align -Wcast-qual
 	C_FLAGS += -Wpointer-arith -Wformat=2 -Wlogical-op

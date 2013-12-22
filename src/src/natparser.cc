@@ -20,9 +20,10 @@ NatConfig::NatConfig():datas(),variables(){}
 NatData::NatData(){}
 NatVariable::NatVariable(){}
 
+//Convert string into vector string
 vector<string> natParse_str2vector(string read_line){
-	vector<string> v;
 
+	vector<string> v;
 	boost::char_separator<char> sep(" \t");
 	boost::tokenizer<boost::char_separator<char>> tokens(read_line, sep);
 
@@ -35,6 +36,7 @@ vector<string> natParse_str2vector(string read_line){
 
 // ouput -> next not commented line as vector<string>
 bool natParseNext(ifstream* input_file,vector<string>& output){
+
 	string read_line;
 
 	while(output.size()==0 && input_file->good()){
@@ -51,8 +53,58 @@ bool natParseNext(ifstream* input_file,vector<string>& output){
 		return true;
 	return false;
 }
+//****************************************
+//Parsing several configuration files YAML
+//****************************************
+bool natParseConfig(std::vector<NatConfig>& out,std::vector<std::string> configpath){
+	for(int i=0;i<configpath.size();i++){
+		NatConfig conf;
+		if(!natParseConfig(conf,configpath[i]))
+			return false;
+		out.push_back(conf);
+	}
+	return true;
+}
+//**************************************
+//Parsing unique configuration file YAML
+//**************************************
+
+bool natParseConfig(NatConfig& conf, std::string configpath){
+
+	std::ifstream read(configpath);
+
+	if(!read.is_open()){
+		cout<<CONSOL_RED_TEXT<<"could not open file "<<CONSOL_CYAN_TEXT<<configpath<< endl;
+		return false;
+	}
+	
+
+	YAML::Parser parser(read);
+	YAML::Node doc;
+	parser.GetNextDocument(doc);
+
+	doc>>conf;
+
+	//=======THIS IS A TEST=======
+	cout<<conf.datas[0].name<<endl;
+	cout<<conf.datas[1].name<<endl;
+	//=============================
+	return true;
+
+}
+
+//***************
+//Update function
+//***************
+void NatData::update(){
+	//TODO
+	//read line and write to readline
+}
 
 
+//****************
+//YAML operator >>
+//****************
 bool operator>>(const YAML::Node& node, std::vector<NatData>& datas){
 
 	NatData data;//declared once here because push_back makes a copy
@@ -208,9 +260,32 @@ bool operator>>(const YAML::Node& node, std::vector<NatVariable>& vars){
 	return ret;	
 }
 
+
 bool operator>>(const YAML::Node& node, std::vector<NatExpression>& vars){
 	//TODO
 }
+
+bool operator>>(const YAML::Node& node, std::vector<NatLateXt>& vars){
+	
+	bool ret=true;
+	for(size_t i=0 ; i< node.size(); i++){
+	
+		NatLateXt var;
+		//====================================
+		node[i]["path"]>>var.path;
+		//====================================
+		const YAML::Node& contents = node[i]["content"];
+	 	for(unsigned j = 0; j < contents.size(); j++){
+
+			std::string content;
+	 		contents[j] >> content;
+	 		var.contents.push_back(content);
+		}
+		vars.push_back(var);
+	}
+	return ret;
+}
+
 
 bool operator>>(const YAML::Node& node, NatConfig& config){
 	bool ret=true;
@@ -221,64 +296,14 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 		ret= false;
 	if(! (node["expressions"] >> config.expressions))
 		ret= false;
+	if(! (node["text"] >> config.text))
+		ret= false;
+	if(! (node["latex"] >> config.latex))
+		ret= false;
+	if(! (node["gnuplot"] >> config.gnuplot))
+		ret= false;
 	return ret;
 }
-
-bool natParseConfig(NatConfig& conf, std::string configpath){
-
-	std::ifstream read(configpath);
-
-	if(!read.is_open()){
-		cout<<CONSOL_RED_TEXT<<"could not open file "<<CONSOL_CYAN_TEXT<<configpath<< endl;
-		return false;
-	}
-	
-
-	YAML::Parser parser(read);
-	YAML::Node doc;
-	parser.GetNextDocument(doc);
-
-	doc>>conf;
-
-	//=======THIS IS A TEST=======
-	cout<<conf.datas[0].name<<endl;
-	cout<<conf.datas[1].name<<endl;
-	//=============================
-	return true;
-
-}
-
-
-
-bool natParseConfig(std::vector<NatConfig>& out,std::vector<std::string> configpath){
-	for(int i=0;i<configpath.size();i++){
-		NatConfig conf;
-		if(!natParseConfig(conf,configpath[i]))
-			return false;
-		out.push_back(conf);
-	}
-	return true;
-}
-
-
-
-void NatData::update(){
-	//TODO
-	//read line and write to readline
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*

@@ -7,7 +7,7 @@
 #include <fstream>
 
 #include "natomi.h"
-#include "arguments.h"
+#include "natconpute.h"
 
 #include <sstream>
 #include <boost/lexical_cast.hpp>
@@ -81,7 +81,6 @@ int main(int argc, char* argv[]) {
 
 
 /*
-	natinit();
 	//====================================================
 	//traiter les arguments
 	process_args(argc,argv);
