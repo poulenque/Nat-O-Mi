@@ -1,0 +1,152 @@
+
+
+
+# - output:
+#   writeTo: /home/doek/output
+#   data:
+#    - name: myData1
+#      path: /home/doek/data
+#    - name: myData2
+#      path: /home/doek/data2
+#   outputContent:
+#    - var: myData1.var1
+#      name: prout
+#      unit: UNITE
+#    - var: myData1.var5
+#    - var: myData2.var5
+#    - var: myData1.var2
+#    - var: myData1.var2 + myData2.var5
+
+# - output:
+# 	writeTo:/home/doek/output2
+# 	data:
+# 		-name:myData2
+# 		 path:/home/doek/data2
+
+# 		-name:myData5
+# 		 path:/home/doek/data58
+
+# 	outputContent:
+# 		-var:myData5.var1
+# 		 name:fromage
+# 		 unit:Kg
+# 		-var:myData5.var5
+# 		 name:eau
+# 		 unit:Km/h
+# 		-var:myData2.var5
+# 		-var:myData5.var2
+# 		-var:myData5.var2 + myData2.var5
+
+
+
+
+
+- config:
+  writeTo: /home/doek/output
+  data:
+   - name: myData1
+     path: /home/doek/data1
+   - name: myData2
+     path: /home/doek/data2
+  outputContent:
+   - var: myData1.var1
+     name: prout
+     unit: UNITE
+   - var: myData1.var5
+   - var: myData2.var5
+   - var: myData1.var2
+   - var: myData1.var2 + myData2.var5
+
+
+
+- config:
+  writeTo: /home/doek/output2
+  data:
+   - name: myData2
+     path: /home/doek/data2
+   - name: myData5
+     path: /home/doek/data5
+  outputContent:
+   - var: myData5.var1
+     name: voiture
+     unit: Kg/h
+   - var: myData5.var5
+     name: souris
+     unit: s
+   - var: myData2.var5
+   - var: myData5.var2
+   - var: myData5.var2 + myData2.var5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- config:
+  data:
+   - name: myData1
+     path: data1.dat
+   - name: myData2
+     path: data2.dat
+
+  variables:
+   - varname: Agent_X
+     var: myData1::var1
+     unit: UNITE
+
+   - varname: Agent_Y
+     var: myData1::var5
+
+   - varname: Agent_Z
+     var: myData2::var5
+
+   - varname: Agent_W
+     var: myData1::var2
+
+   - varname: Agent_LucGirod
+     expr: Agent_W + Agent_Z
+
+  text:
+    - path: /home/doek/prout_caca.net
+      content: [Agent_W,Agent_X]
+  latex:
+    - path: /home/doek/prout_caca.net.tex
+      content: [Agent_LucGirod]
+  gnuplot:
+    - path: /home/doek/prout_caca.net.gnuplot
+      content: [Agent_Z,Agent_Y]
+    - path: /home/doek/prout_caca.net2.gnuplot
+      content: [Agent_LucGirod,Agent_Y]
+
+
+
+
+
+
+
+
+
+
+
+
