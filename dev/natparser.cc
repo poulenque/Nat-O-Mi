@@ -15,13 +15,13 @@ using namespace std;
 
 
 static std::map<std::string, NatData> str2natData;
-static std::map<std::string, NatVariable> str2NatVariable;
+static std::map<std::string, NatVariable*> str2NatVariable;
 
 
 
 
 //Constructor
-NatConfig::NatConfig():datas(),natvars(){}
+NatConfig::NatConfig():datas(){}
 NatData::NatData(){}
 NatVariable::NatVariable(){}
 
@@ -122,9 +122,9 @@ bool operator>>(const YAML::Node& node, std::vector<NatData>& datas){
 				<<CONSOL_RED_TEXT<<"\" is empty."<<endl;
 				ret=false;
 			}
-			//Parsing Header Files of datas en then finnishin mapping variables
-			//=================================================================
-			datas.back().variables=natParseHeader(data_line);
+			//Parsing Header Files of datas en then mapping variables
+			//=======================================================
+			datas.back().variables = natParseHeader(data_line);
 		}
 		//====================================
 		//map str2natData
@@ -150,7 +150,7 @@ bool operator>>(const YAML::Node& node, std::vector<MetaName>& vars){
 		//=========================================================
 		// std::string name;
 		node[i]["varname"]>>vars.back();
-		if(str2NatVariable.find(vars.back())!=str2NatVariable.end())
+		if(str2natData.find(vars.back())!=str2natData.end())
 		{
 			cout
 			<<CONSOL_RED_TEXT<<"ERROR : (line"
@@ -202,13 +202,15 @@ bool operator>>(const YAML::Node& node, std::vector<MetaName>& vars){
 				<<CONSOL_RED_TEXT<<" does not exist !"<<endl<<CONSOL_NORMAL_TEXT;
 				ret=false;
 			}
-			cout << str2 << " " << str3 << endl;
-			//str2natData.find(str2).str2NatVariable.find(
+			//TODO CECI EST DANGEREUX ET SANS EFFETS!
+			if(str2NatVariable[str3] !=NULL)
+				str2NatVariable[str3]->varname = vars.back();
 		}
 		//=========================================================
 		//Expr;
 		else if(node[i].FindValue("expr"))
 		{
+			//TODO
 			node[i]["expr"]>>str;
 			//GiNaC::ex(str,vars.back().expr);
 		}
@@ -217,10 +219,6 @@ bool operator>>(const YAML::Node& node, std::vector<MetaName>& vars){
 			std::cout << "Pas de node 'var' ou 'expr' trouvé!" << std::endl;
 			exit(1);
 		}
-		//map str2NatVariable
-		//equivalent to:
-		//str2NatVariable[vars.back().name]=&vars.back();
-		//str2NatVariable.insert( pair<MetaName,NatVariable>( vars.back() , (vars.back())));
 	}
 	return ret;	
 }
@@ -257,7 +255,7 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 
 	if(! (node["data"]>> config.datas))
 		ret= false;
-	if(! (node["variables"] >> config.natvars))
+	if(! (node["variables"] >> config.natvar))
 		ret= false;
 	if(! (node["text"] >> config.text))
 		ret= false;
@@ -266,6 +264,8 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 	if(! (node["gnuplot"] >> config.gnuplot))
 		ret= false;
 
+
+	cout << " GIGA TEST " << config.datas[0].variables[0].varname << std::endl;
 	return ret;
 }
 
@@ -379,6 +379,10 @@ std::vector<NatVariable> natParseHeader(vector<std::string> input){
 		//cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"expr : "<<CONSOL_NORMAL_TEXT<<n.expr<<endl;
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"-->"<<"==================="<<endl;
 
+		//map str2NatVariable
+		//equivalent to:
+		//str2NatVariable[vars.back().name]=&vars.back();
+		str2NatVariable.insert( pair<std::string,NatVariable*>( n.name , &n));
 		c.push_back(n);
 	}
 

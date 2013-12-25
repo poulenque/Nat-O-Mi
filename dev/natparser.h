@@ -46,7 +46,7 @@ struct NatConfig{
 	GiNaC::symtab variables_;
 
 	std::vector<NatData> datas;
-	std::vector<MetaName> natvars;
+	std::vector<MetaName> natvar;
 	std::vector<NatOutPute> text;
 	std::vector<NatOutPute> latex;
 	std::vector<NatOutPute> gnuplot;
