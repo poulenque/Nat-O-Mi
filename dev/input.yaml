@@ -1,19 +1,17 @@
 data:
  - name: myData1
-   path: datas/data1.dat
+   path: input.dat
  - name: myData2
-   path: datas/data2.dat
+   path: input2.dat
 variables:
  - varname: Agent_X
-   var: myData1::var1
-   unit: UNITE
+   var: myData1::J
  - varname: Agent_Y
    var: myData1::var5
  - varname: Agent_Z
    var: myData2::var5
  - varname: Agent_W
    var: myData1::var2
-expressions:
  - varname: Agent_LucGirod
    expr: Agent_W + Agent_Z
 text:

@@ -17,4 +17,4 @@ GiNaC::ex natConPute(const std::string& formula, std::vector<std::string>& line,
 
 GiNaC::ex natDerive(const std::string& formula, const std::string& var, unsigned int nth);
 
-GiNaC::ex natUncerError(const std::string& formula, const std::vector<NatInfo>& data_info, std::map<std::string,size_t> dataName_str2num);
+GiNaC::ex natUncerError(const std::string& formula, const std::vector<NatVariable>& data_vars, std::map<std::string,size_t> dataName_str2num);

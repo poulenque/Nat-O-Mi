@@ -8,57 +8,28 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 
-
 const string commentSymbol = "#";
 
 using namespace std;
 
-static std::map<std::string, NatData*> str2natData;
-static std::map<std::string, NatVariable*> str2natVariable;
 
-NatConfig::NatConfig():datas(),variables(){}
+
+static std::map<std::string, NatData> str2natData;
+static std::map<std::string, NatVariable> str2NatVariable;
+
+
+
+
+//Constructor
+NatConfig::NatConfig():datas(),natvars(){}
 NatData::NatData(){}
 NatVariable::NatVariable(){}
-NatExpression::NatExpression(){}
 
-//Convert string into vector string
-vector<string> natParse_str2vector(string read_line){
-
-	vector<string> v;
-	boost::char_separator<char> sep(" \t");
-	boost::tokenizer<boost::char_separator<char>> tokens(read_line, sep);
-
-	for (const auto& t : tokens){
-		v.push_back(t);
-	}
-
-	return v;
-}
-
-// ouput -> next not commented line as vector<string>
-bool natParseNext(ifstream* input_file,vector<string>& output){
-
-	string read_line;
-
-	while(output.size()==0 && input_file->good()){
-		getline(*input_file,read_line);
-		output = natParse_str2vector(read_line);
-
-		//if this line was actually a comment...
-		if(output.size() && commentSymbol==output[0].substr(0,commentSymbol.size())){
-			//do ignore that line
-			output=vector<string>();
-		}
-	}
-	if(output.size())
-		return true;
-	return false;
-}
 //****************************************
 //Parsing several configuration files YAML
 //****************************************
 bool natParseConfig(std::vector<NatConfig>& out,std::vector<std::string> configpath){
-	for(int i=0;i<configpath.size();i++){
+	for(size_t i=0;i<configpath.size();i++){
 		NatConfig conf;
 		if(!natParseConfig(conf,configpath[i]))
 			return false;
@@ -78,7 +49,6 @@ bool natParseConfig(NatConfig& conf, std::string configpath){
 		cout<<CONSOL_RED_TEXT<<"could not open file "<<CONSOL_CYAN_TEXT<<configpath<< endl;
 		return false;
 	}
-	
 
 	YAML::Parser parser(read);
 	YAML::Node doc;
@@ -86,12 +56,7 @@ bool natParseConfig(NatConfig& conf, std::string configpath){
 
 	doc>>conf;
 
-	//=======THIS IS A TEST=======
-	cout<<conf.datas[0].name<<endl;
-	cout<<conf.datas[1].name<<endl;
-	//=============================
 	return true;
-
 }
 
 //***************
@@ -101,11 +66,9 @@ void NatData::update(){
 	//TODO
 	//read line and write to readline
 }
-
-
-//****************
-//YAML operator >>
-//****************
+//*********************
+//YAML operator >> Data
+//*********************
 bool operator>>(const YAML::Node& node, std::vector<NatData>& datas){
 
 	NatData data;//declared once here because push_back makes a copy
@@ -116,11 +79,9 @@ bool operator>>(const YAML::Node& node, std::vector<NatData>& datas){
 	for(size_t i=0 ; i< node.size(); i++){
 	
 		datas.push_back(data);
-
 		//====================================
 		node[i]["name"]>>datas.back().name;
-
-		// if(str2natData[datas.back().name]!=NULL){
+		//====================================
 		if(str2natData.find(datas.back().name)!=str2natData.end()){
 			cout
 			<<CONSOL_RED_TEXT   <<"ERROR : (line"
@@ -140,7 +101,8 @@ bool operator>>(const YAML::Node& node, std::vector<NatData>& datas){
 
 		datas.back().file = new ifstream(path);
 
-		if(! datas.back().file->is_open() ){
+		if(!datas.back().file->is_open()){
+
 			cout
 			<<CONSOL_RED_TEXT   <<"ERROR : (line"
 			<<CONSOL_CYAN_TEXT  << 666
@@ -150,83 +112,78 @@ bool operator>>(const YAML::Node& node, std::vector<NatData>& datas){
 			<<CONSOL_NORMAL_TEXT;
 
 			ret=false;
-		}else{
-			//TODO
-			//READ HEADER
-			vector<string> readLine;
-			//var name
-			if(!natParseNext(datas.back().file,datas.back().header_name))
-				ret = false;
-			//unit
-			if(natParseNext(datas.back().file,datas.back().header_unit))
-				ret = false;
-			//error
-			if(natParseNext(datas.back().file,datas.back().header_error))
-				ret = false;
+
+		}else
+		{
+			std::vector<std::string> data_line;
+			//trouver la ligne avec les noms de variable
+			if(!natParseNext(datas.back().file,data_line)){
+				cout<<CONSOL_RED_TEXT<<"\""<<CONSOL_CYAN_TEXT<<*datas.back().file
+				<<CONSOL_RED_TEXT<<"\" is empty."<<endl;
+				ret=false;
+			}
+			//Parsing Header Files of datas en then finnishin mapping variables
+			//=================================================================
+			datas.back().variables=natParseHeader(data_line);
 		}
 		//====================================
-
 		//map str2natData
 		//equivalent to:
-		//	str2natData[datas.back().name]=&( datas.back() );
-		str2natData.insert( pair<string,NatData*>( datas.back().name , &( datas.back() ) ) );
-
+		//str2natData[datas.back().name]=&datas.back();
+		str2natData.insert( pair<string,NatData>( datas.back().name , datas.back()));
 	}
 	return ret;
 }
+//*************************
+//YAML operator >> Variable
+//*************************
+bool operator>>(const YAML::Node& node, std::vector<MetaName>& vars){
 
-
-
-
-
-bool operator>>(const YAML::Node& node, std::vector<NatVariable>& vars){
-	NatVariable var;
+	MetaName var;
 	string str;
 	string str2;
+	string str3;
 	bool ret = true;
 	for(size_t i=0 ; i< node.size(); i++){
-		vars.push_back(var);
 
-		//=========================================================
+		vars.push_back(var);
 		//=========================================================
 		// std::string name;
-		node[i]["varname"]>>vars.back().name;
-		if(str2natVariable.find(vars.back().name)!=str2natVariable.end()){
+		node[i]["varname"]>>vars.back();
+		if(str2NatVariable.find(vars.back())!=str2NatVariable.end())
+		{
 			cout
 			<<CONSOL_RED_TEXT<<"ERROR : (line"
 			<<CONSOL_CYAN_TEXT<< 666
 			<<CONSOL_RED_TEXT<<") you cannot name two variables with the same name ("
-			<<CONSOL_CYAN_TEXT<<vars.back().name
+			<<CONSOL_CYAN_TEXT<<vars.back()
 			<<CONSOL_RED_TEXT<<") !"
 			<<endl<<CONSOL_NORMAL_TEXT;
 			cout.flush();
 			ret=false;
 		}
-		//map str2natVariable
-		//equivalent to:
-		//	str2natVariable[vars.back().name]=&( vars.back() );
-		str2natVariable.insert( pair<string,NatVariable*>( vars.back().name , &( vars.back() ) ) );
-
-
-
 		//=========================================================
-		//=========================================================
-		// NatData * data;
-		node[i]["var"]>>str;
-		size_t pos = str.find("::");
-		str2 = str.substr (0,pos);
+		//NatData* data;
+		//Check if var or expr exists, else it stops
+		if(node[i].FindValue("var"))
+		{
+			node[i]["var"]>>str;
+			size_t pos = str.find("::");
+			str2 = str.substr (0,pos);
+			str3 = str.substr (pos+2);// avoid the "::"
 
-		if(pos==string::npos){
-			cout
-			<<CONSOL_RED_TEXT<<"ERROR : (line"
-			<<CONSOL_CYAN_TEXT<< 666
-			<<CONSOL_RED_TEXT<<") variable "
-			<<CONSOL_CYAN_TEXT<<str
-			<<CONSOL_RED_TEXT<<"\'s data missing (format should be myData::var)"<<endl<<CONSOL_NORMAL_TEXT;
-			ret=false;
-		}else{
-			vars.back().data = str2natData[str2];
-			if(vars.back().data==NULL){
+			if(pos==string::npos)
+			{
+				cout
+				<<CONSOL_RED_TEXT<<"ERROR : (line"
+				<<CONSOL_CYAN_TEXT<< 666
+				<<CONSOL_RED_TEXT<<") variable "
+				<<CONSOL_CYAN_TEXT<<str
+				<<CONSOL_RED_TEXT<<"\'s data missing (format should be myData::var)"<<endl<<CONSOL_NORMAL_TEXT;
+				ret=false;
+			}
+			else if(str2natData.find(str2)==str2natData.end())
+			{
 				cout
 				<<CONSOL_RED_TEXT<<"ERROR : (line"
 				<<CONSOL_CYAN_TEXT<< 666
@@ -235,82 +192,72 @@ bool operator>>(const YAML::Node& node, std::vector<NatVariable>& vars){
 				<<CONSOL_RED_TEXT<<" does not exist !"<<endl<<CONSOL_NORMAL_TEXT;
 				ret=false;
 			}
+			else if(str2NatVariable.find(str3)==str2NatVariable.end())
+			{
+				cout
+				<<CONSOL_RED_TEXT<<"ERROR : (line"
+				<<CONSOL_CYAN_TEXT<< 666
+				<<CONSOL_RED_TEXT<<") var "
+				<<CONSOL_CYAN_TEXT<<str3
+				<<CONSOL_RED_TEXT<<" does not exist !"<<endl<<CONSOL_NORMAL_TEXT;
+				ret=false;
+			}
+			cout << str2 << " " << str3 << endl;
+			//str2natData.find(str2).str2NatVariable.find(
 		}
-
-
-		// Unit unit;
-		try{
-			node[i]["unit"]>>str;
-			vars.back().unit= str2unit(str);
-		}catch(YAML::TypedKeyNotFound<std::string> e){
-			//TODO
-			cout<<"TODO: get UNIT in data"<<endl;
-			//vars.back().unit= str2unit(str);
+		//=========================================================
+		//Expr;
+		else if(node[i].FindValue("expr"))
+		{
+			node[i]["expr"]>>str;
+			//GiNaC::ex(str,vars.back().expr);
 		}
-
-		// double value;
-		// std::string value_str;
-		vars.back().value_str;
-
-
-		// - varname: Agent_X
-		// var: myData1::var1
-		// unit: UNITE
-		// expr: Agent_W + Agent_Z
+		else
+		{
+			std::cout << "Pas de node 'var' ou 'expr' trouvé!" << std::endl;
+			exit(1);
+		}
+		//map str2NatVariable
+		//equivalent to:
+		//str2NatVariable[vars.back().name]=&vars.back();
+		//str2NatVariable.insert( pair<MetaName,NatVariable>( vars.back() , (vars.back())));
 	}
 	return ret;	
 }
-
-
-bool operator>>(const YAML::Node& node, std::vector<NatExpression>& vars){
-	//TODO
+//************************
+//YAML operator >> Outputs
+//************************
+bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& outs){
+	
+	NatOutPute out;
 	bool ret=true;
 	for(size_t i=0 ; i< node.size(); i++){
+		//===================================
+		outs.push_back(out);
 	
-		NatExpression var;
 		//====================================
-		node[i]["varname"]>>var.varname;
-		//====================================
-		const YAML::Node& expr_node = node[i]["expr"];
-	 	for(unsigned j = 0; j < expr_node.size(); j++){
-
-	 		expr_node[j] >> var.expr;
-		}
-		vars.push_back(var);
-		cout << vars[i].varname << " " << vars[i].expr << std::endl;
-	}
-}
-
-bool operator>>(const YAML::Node& node, std::vector<NatLateXt>& vars){
-	
-	bool ret=true;
-	for(size_t i=0 ; i< node.size(); i++){
-	
-		NatLateXt var;
-		//====================================
-		node[i]["path"]>>var.path;
+		node[i]["path"]>>outs.back().path;
 		//====================================
 		const YAML::Node& content_node = node[i]["content"];
-	 	for(unsigned j = 0; j < content_node.size(); j++){
-
+	 	for(unsigned j = 0; j < content_node.size(); j++)
+		{
 			std::string content;
 	 		content_node[j] >> content;
-	 		var.contents.push_back(content);
+	 		outs.back().contents.push_back(content);
 		}
-		vars.push_back(var);
 	}
 	return ret;
 }
-
-
+//***********************
+//YAML operator >> Config
+//***********************
 bool operator>>(const YAML::Node& node, NatConfig& config){
+
 	bool ret=true;
+
 	if(! (node["data"]>> config.datas))
 		ret= false;
-	//read all headers
-	if(! (node["variables"] >> config.variables))
-		ret= false;
-	if(! (node["expressions"] >> config.expressions))
+	if(! (node["variables"] >> config.natvars))
 		ret= false;
 	if(! (node["text"] >> config.text))
 		ret= false;
@@ -318,11 +265,14 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 		ret= false;
 	if(! (node["gnuplot"] >> config.gnuplot))
 		ret= false;
+
 	return ret;
 }
 
 
-/*
+//***********************
+//NATOMI HEADER PARSE
+//***********************
 
 //!!!!!!!!!!!!attention!!!!!!!!!!!!!!
 // le cas ou un fermant est a gauche d'un mot n'est pas gere!
@@ -366,31 +316,6 @@ vector<string> natParse_str2vector(string read_line){
 	return v;
 }
 
-
-//TODO
-//signal if commentline !
-bool natParseNext(ifstream& input_file,vector<string>& output){
-	string read_line;
-
-	while(output.size()==0 && input_file.good()){
-		getline(input_file,read_line);
-		output = natParse_str2vector(read_line);
-
-		//if this line was actually a comment...
-		if(output.size() && commentSymbol==output[0].substr(0,commentSymbol.size())){
-			//do ignore that line
-			output=vector<string>();
-		}
-	}
-	if(output.size())
-		return true;
-	return false;
-}
-
-
-NatInfo::NatInfo():name(),unit(),error(),formula() {}
-
-
 //TODO
 //
 //Complete missing things : calculate Unit
@@ -399,19 +324,15 @@ NatInfo::NatInfo():name(),unit(),error(),formula() {}
 //weird stuff like [[] or []]
 //error in % or %0 or constant or variable
 //check end with ]
-//
-
-
-
-vector<NatInfo> natParseHeader(vector<string> input){
+std::vector<NatVariable> natParseHeader(vector<std::string> input){
 
 	cout<<CONSOL_LIGHTGRAY_TEXT
 	<<"! HEADER PARSE !"<<endl
 	<<"^^^^^^^^^^^^^^^^"<<endl;
 
-	vector<NatInfo> c;
+	vector<NatVariable> c;
 	for(auto & t:input){
-		NatInfo n;
+		NatVariable n;
 
 		size_t i=0;
 		while(i<t.size() && t[i]!='['){
@@ -450,19 +371,12 @@ vector<NatInfo> natParseHeader(vector<string> input){
 			}
 		}
 		i++;
-		if(i<t.size() && t[i]=='['){
-			i++;
-			while(i<t.size() && t[i]!=']'){
-				n.formula.push_back(t[i]);
-				i++;
-			}
-		}
 
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"read    : "<<CONSOL_CYAN_TEXT<<t<<endl;
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"name    : "<<CONSOL_NORMAL_TEXT<<n.name<<endl;
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"unit    : "<<CONSOL_NORMAL_TEXT<<n.unit<<endl;
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"error   : "<<CONSOL_NORMAL_TEXT<<n.error<<endl;
-		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"formula : "<<CONSOL_NORMAL_TEXT<<n.formula<<endl;
+		//cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"expr : "<<CONSOL_NORMAL_TEXT<<n.expr<<endl;
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"-->"<<"==================="<<endl;
 
 		c.push_back(n);
@@ -473,33 +387,22 @@ vector<NatInfo> natParseHeader(vector<string> input){
 	return c;
 }
 
+// ouput -> next not commented line as vector<string>
+bool natParseNext(ifstream* input_file,vector<string>& output){
 
+	string read_line;
 
-//using namespace boost;
+	while(output.size()==0 && input_file->good()){
+		getline(*input_file,read_line);
+		output = natParse_str2vector(read_line);
 
-
-
-//TODO
-vector<double> natParseContent(vector<string> input){
-	vector<double> ret;
-	for(size_t i=0;i<input.size();i++){
-		double d;
-		try{
-			d = boost::lexical_cast<double>(input[i]);
-			ret.push_back(d);
-		}catch (boost::bad_lexical_cast const&){
-			//si ca ne marche pas,
-			//c'est qu'il s'agit d'un
-			//code...
-			//NaN
-			//to Calculate
+		//if this line was actually a comment...
+		if(output.size() && commentSymbol==output[0].substr(0,commentSymbol.size())){
+			//do ignore that line
+			output=vector<string>();
 		}
 	}
-	return ret;
+	if(output.size())
+		return true;
+	return false;
 }
-
-
-
-
-
-*/

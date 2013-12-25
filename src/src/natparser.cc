@@ -19,6 +19,7 @@ static std::map<std::string, NatVariable*> str2natVariable;
 NatConfig::NatConfig():datas(),variables(){}
 NatData::NatData(){}
 NatVariable::NatVariable(){}
+NatExpression::NatExpression(){}
 
 //Convert string into vector string
 vector<string> natParse_str2vector(string read_line){
@@ -263,6 +264,21 @@ bool operator>>(const YAML::Node& node, std::vector<NatVariable>& vars){
 
 bool operator>>(const YAML::Node& node, std::vector<NatExpression>& vars){
 	//TODO
+	bool ret=true;
+	for(size_t i=0 ; i< node.size(); i++){
+	
+		NatExpression var;
+		//====================================
+		node[i]["varname"]>>var.varname;
+		//====================================
+		const YAML::Node& expr_node = node[i]["expr"];
+	 	for(unsigned j = 0; j < expr_node.size(); j++){
+
+	 		expr_node[j] >> var.expr;
+		}
+		vars.push_back(var);
+		cout << vars[i].varname << " " << vars[i].expr << std::endl;
+	}
 }
 
 bool operator>>(const YAML::Node& node, std::vector<NatLateXt>& vars){
@@ -274,11 +290,11 @@ bool operator>>(const YAML::Node& node, std::vector<NatLateXt>& vars){
 		//====================================
 		node[i]["path"]>>var.path;
 		//====================================
-		const YAML::Node& contents = node[i]["content"];
-	 	for(unsigned j = 0; j < contents.size(); j++){
+		const YAML::Node& content_node = node[i]["content"];
+	 	for(unsigned j = 0; j < content_node.size(); j++){
 
 			std::string content;
-	 		contents[j] >> content;
+	 		content_node[j] >> content;
 	 		var.contents.push_back(content);
 		}
 		vars.push_back(var);

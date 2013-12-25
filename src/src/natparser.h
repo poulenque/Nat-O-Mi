@@ -34,7 +34,7 @@ struct NatVariable{
 	std::string name;
 	NatData * data;
 	size_t dataIndex;
-	Unit unit;
+	Unit unit;	
 	double value;
 	std::string value_str;
 };
@@ -47,6 +47,10 @@ struct NatExpression{
 	Unit unit;
 	double value;
 	//std::string value_str;
+
+	//Tim
+	std::string varname;
+	std::string expr;
 };
 
 struct NatConfig{

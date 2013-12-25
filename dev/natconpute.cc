@@ -58,7 +58,7 @@ GiNaC::ex natDerive(const std::string& formula, const std::string& var, unsigned
 	return e.diff(GiNaC::ex_to<GiNaC::symbol>(table[var]), nth);
 }
 
-GiNaC::ex natUncerError(const std::string& formula, const std::vector<NatInfo>& data_info, std::map<std::string,size_t> dataName_str2num)
+GiNaC::ex natUncerError(const std::string& formula, const std::vector<NatVariable>& data_vars, std::map<std::string,size_t> dataName_str2num)
 {
 
 	GiNaC::parser reader;
@@ -81,7 +81,7 @@ GiNaC::ex natUncerError(const std::string& formula, const std::vector<NatInfo>& 
 		std::cout << data_info[id].name << "]^2= ";
 		std::cout << pow(e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::ex(StrToDouble(data_info[id].error)),2) << std::endl;*/
 
-		sum += pow(e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(data_info[id].error),2);
+		sum += pow(e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(data_vars[id].error),2);
 	}
 	return sqrt(sum);//uncertainties formula
 }
