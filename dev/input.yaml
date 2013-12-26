@@ -9,9 +9,9 @@ variables:
  - name: Agent_Y
    in: myData1::var5
  - name: Agent_Z
-   in: myData2::U
- - name: Agent_LucGirod
    in: myData1::var2
+ - name: Agent_LucGirod
+   in: myData1::U
    expr: Agent_W + Agent_Z
 ###########################
 text:

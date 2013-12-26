@@ -6,13 +6,13 @@ void test_Parser(std::vector<NatConfig> config)
 
 		//Print datas infos:
 		std::cout << "\nDatas:" << std::endl;
-		for(size_t i(0);i <  config[j].datas.size();i++)
-			std::cout << config[j].datas[i].name << "\n" <<  config[j].datas[i].file << std::endl;
+		for(auto it = config[j].datas.cbegin(); it != config[j].datas.cend(); ++it)
+   			 std::cout << it->first << " " << it->second <<"\n";
 
 		//Print  variables:
 		std::cout << "\nVariables:" << std::endl;
 		for(auto it = config[j].natvar.cbegin(); it != config[j].natvar.cend(); ++it)
-   			 std::cout << it->first << "\n";
+   			 std::cout << it->first << " " << it->second->expr <<"\n";
 
 
 		//Print  Output:
