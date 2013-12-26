@@ -4,16 +4,16 @@ data:
  - name: myData2
    path: input2.dat
 variables:
- - varname: Agent_X
-   var: myData1::J
- - varname: Agent_Y
-   var: myData1::var5
- - varname: Agent_Z
-   var: myData2::var5
- - varname: Agent_W
-   var: myData1::var2
- - varname: Agent_LucGirod
+ - name: Agent_X
+   in: myData1::J
+ - name: Agent_Y
+   in: myData1::var5
+ - name: Agent_Z
+   in: myData2::U
+ - name: Agent_LucGirod
+   in: myData1::var2
    expr: Agent_W + Agent_Z
+###########################
 text:
   - path: /home/doek/prout_caca.net
     content: [Agent_W,Agent_X]

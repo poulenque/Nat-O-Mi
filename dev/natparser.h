@@ -10,18 +10,17 @@
 #include <ginac/ginac.h>
 #include "natUtils.h"
 
-typedef std::string MetaName;
-
 struct NatVariable{
 
 	NatVariable();
-	MetaName varname;
 	std::string name;
 	Unit unit;
 	std::string error;
 	double error_value;
-	GiNaC::ex expr;
+	std::string expr;
 };
+
+typedef std::map<std::string, NatVariable*> MetaName;
 
 struct NatData{
 
@@ -34,7 +33,7 @@ struct NatData{
 
 struct NatOutPute{
 
-	std::vector<MetaName> contents;
+	std::vector<std::string> contents;
 	std::string path;
 };
 
@@ -44,9 +43,9 @@ struct NatConfig{
 	void update();
 
 	GiNaC::symtab variables_;
+	MetaName natvar;
 
 	std::vector<NatData> datas;
-	std::vector<MetaName> natvar;
 	std::vector<NatOutPute> text;
 	std::vector<NatOutPute> latex;
 	std::vector<NatOutPute> gnuplot;
@@ -55,16 +54,17 @@ struct NatConfig{
 
 bool natParseNext(std::ifstream* input_file,std::vector<std::string>& output);
 bool NatParseNextLines(NatOutPute& output);
-
 std::vector<double> natParseContent(std::vector<std::string> input);
-std::vector<NatVariable> natParseHeader(std::vector<std::string> input);
 
 // NatOutPute NatParseConfig(std::string path);
 bool natParseConfig(NatConfig& conf , std::string configpath);
 bool natParseConfig(std::vector<NatConfig>& out,std::vector<std::string> configpath);
 
+bool natParseHeader(NatConfig& config);
+MetaName natParseHeader(std::vector<std::string> input);
+
 bool operator>>(const YAML::Node& node, std::vector<NatData>& datas);
-bool operator>>(const YAML::Node& node, std::vector<MetaName>& vars);
+bool operator>>(const YAML::Node& node, MetaName& vars);
 bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& vars);
 bool operator>>(const YAML::Node& node, NatConfig& config);
 
