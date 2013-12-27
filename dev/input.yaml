@@ -7,21 +7,21 @@ variables:
  - name: Agent_X
    in: myData1::J
  - name: Agent_Y
-   in: myData1::var5
+   in: myData1::Temps
  - name: Agent_Z
-   in: myData1::var2
+   in: myData2::U
  - name: Agent_LucGirod
-   in: myData1::U
-   expr: Agent_W + Agent_Z
+   in: myData2::Temps
+   expr: Agent_W + Agent_Z#what if Agent_W doesnt exist?
 ###########################
 text:
-  - path: /home/doek/prout_caca.net
-    content: [Agent_W,Agent_X]
-latex:
-  - path: /home/doek/prout_caca.net.tex
-    content: [Agent_LucGirod]
-gnuplot:
-  - path: /home/doek/prout_caca.net.gnuplot
-    content: [Agent_Z,Agent_Y]
-  - path: /home/doek/prout_caca.net2.gnuplot
-    content: [Agent_LucGirod,Agent_Y]
+  - path: prout_caca.net
+    content: [Agent_X,Agent_LucGirod]
+#latex:
+#  - path: prout_caca.net.tex
+#    content: [Agent_LucGirod]
+#gnuplot:
+#  - path: prout_caca.net.gnuplot
+#    content: [Agent_Z,Agent_Y]
+#  - path: prout_caca.net2.gnuplot
+#    content: [Agent_LucGirod,Agent_Y]

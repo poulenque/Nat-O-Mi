@@ -17,6 +17,7 @@ struct NatVariable{
 	Unit unit;
 	std::string error;
 	std::string expr;
+	size_t index;
 };
 
 typedef std::map<std::string, NatVariable*> MetaName;
@@ -37,6 +38,8 @@ struct NatConfig{
 
 	MetaName natvar;
 	NatData datas;
+
+	void updateVars();
 
 	std::vector<NatOutPute> text;
 	std::vector<NatOutPute> latex;
@@ -59,5 +62,7 @@ bool operator>>(const YAML::Node& node, NatData& datas);
 bool operator>>(const YAML::Node& node, MetaName& vars);
 bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& vars);
 bool operator>>(const YAML::Node& node, NatConfig& config);
+
+std::ostream& operator<<( std::ostream& out, const NatVariable& var);
 
 #endif

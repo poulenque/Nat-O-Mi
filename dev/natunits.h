@@ -43,7 +43,7 @@ void natUnitInit();
 std::string unit2str(Unit name);
 Unit str2unit(std::string name);
 
-std::ostream& operator<<(std::ostream& out, Unit & unit);
+std::ostream& operator<<(std::ostream& out, const Unit& unit);
 
 //on veut :
 //

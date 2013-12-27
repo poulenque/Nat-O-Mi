@@ -132,7 +132,7 @@ special(){
 	*this = str2unit(name);
 }
 
-ostream& operator<<(ostream& out, Unit & unit){
+ostream& operator<<(ostream& out, const Unit& unit){
 	out<<unit2str(unit);
 	return out;
 }

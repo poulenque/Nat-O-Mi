@@ -68,9 +68,11 @@ int main(int argc, char* argv[]) {
 	natinit();
 
 	vector<NatConfig> test;
-	natParseConfig(test,input);
+	if(!natParseConfig(test,input))
+		exit(1);//Leave the buggy program!
 
 	test_Parser(test);
+	test_TextOut(test);
 
 
 	return 0;

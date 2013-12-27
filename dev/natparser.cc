@@ -14,7 +14,7 @@ using namespace std;
 
 
 
-static 	std::multimap<std::string,std::string> datatovar;
+static 	std::map<std::string,std::string> datatovar;
 
 
 //Constructor
@@ -146,23 +146,21 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 
 			//Special, checks if var is in data and keep the boolean
 			//======================================================
-			bool matching=false;
 			bool redefinition=false;
 
-   			 pair <multimap<string,string>::iterator, multimap<string,string>::iterator> checker;
-    		checker = datatovar.equal_range(str2);
+			//Equivalent to datatovar[str2]
+   			 pair <multimap<string,string>::iterator, multimap<string,string>::iterator> checker = datatovar.equal_range(str2);
 			for(multimap<string,string>::iterator it=checker.first; it!=checker.second; ++it)
 			{
 				if(it->second==str3)
 				{
-					matching=true;
 					//Mapping the string name of datas to collection of vars  meta name
 					//=================================================================
-					datatovar.insert( pair<string,string>(str2 , name));
+					datatovar.insert( pair<string,string>(str2 , str2+"::"+name));
  					datatovar.erase(it);
 					break;//TODO beurk?
 				}
-				else if(vars[it->second]->name==str3)
+				else if(vars.find(str)==vars.end())
 					redefinition=true;
 			}
 
@@ -194,7 +192,7 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 			}
 			//Use the previous bool result to print if var exists in data
 			//===========================================================
-			else if(!matching && !redefinition)
+			else if(vars.find(str)==vars.end())
 			{
 				cout
 				<<CONSOL_RED_TEXT<<"ERROR : (line"
@@ -223,14 +221,14 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 			{
 				//Mapping the string name of meta name to corresponding var
 				//=========================================================
-				vars.insert( pair<string,NatVariable*>(name , vars[str3]));
- 				vars.erase(str3);
+				//vars.insert( pair<string,NatVariable*>(name , vars[str]));
+ 				//vars.erase(str);
 			}
 		}//=========================================================
-		if(node[i].FindValue("expr"))
+		if(node[i].FindValue("expr") && ret)
 		{
 			//==================================== //TODO CONVERT STR To GINAC
-			node[i]["expr"]>>vars[name]->expr;
+			//node[i]["expr"]>>vars[name]->expr;
 		}
 	}
 	return ret;	
@@ -242,13 +240,22 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& outs){
 	
 	NatOutPute out;
+	string path;
 	bool ret=true;
 	for(size_t i=0 ; i< node.size(); i++){
+
 		//===================================
 		outs.push_back(out);
-	
 		//====================================
-		node[i]["path"]>>outs.back().path;
+		node[i]["path"]>>path;
+		ofstream output(path);
+
+		if(!output.is_open())
+		{
+			cout<<CONSOL_RED_TEXT<<"could not open file"<<CONSOL_CYAN_TEXT<<path<< endl<<CONSOL_NORMAL_TEXT;
+			ret=false;
+		}
+		outs.back().path = path;
 		//====================================
 		const YAML::Node& content_node = node[i]["content"];
 	 	for(unsigned j = 0; j < content_node.size(); j++)
@@ -273,16 +280,71 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 		ret = false;
 	if(! (node["variables"] >> config.natvar))
 		ret= false;
-	if(! (node["text"] >> config.text))
-		ret= false;
-	if(! (node["latex"] >> config.latex))
-		ret= false;
-	if(! (node["gnuplot"] >> config.gnuplot))
-		ret= false;
+
+	if(node.FindValue("text")){
+		if(!(node["text"] >> config.text))
+			ret= false;
+	}
+	if(node.FindValue("latex")){
+		if(! (node["latex"] >> config.latex))
+			ret= false;
+	}
+	if(node.FindValue("gnuplot")){
+		if(! (node["gnuplot"] >> config.gnuplot))
+			ret= false;
+	}	
+
+for( 	std::multimap<std::string,std::string>::iterator it = datatovar.begin(); it != datatovar.end(); ++it)
+	cout << it->first << " " << it->second << endl;
 
 	return ret;
 }
 
+//***********************
+//Config update vars Func
+//***********************
+void NatConfig::updateVars()
+{
+	//	foreach output_text, output_latex, output_gnuplot
+	std::vector<std::string> data_line;
+	//update var_value;//global so there is no mistakes
+	for( NatData::iterator it = this->datas.begin(); it != this->datas.end(); ++it)
+	{
+		natParseNext(it->second,data_line);//TODO wierd wierd avoid the bool return
+
+		//Equivalent to datatovar[it->first]
+		pair <multimap<string,string>::iterator, multimap<string,string>::iterator> checker = datatovar.equal_range(it->first);
+		for(multimap<string,string>::iterator it2=checker.first; it2!=checker.second; ++it2)	{
+				cout << it->first << " " << endl;
+				cout << it2->second << " " << endl;
+				cout << this->natvar[it2->second] << " " << endl;
+				cout << this->natvar[it2->second]->index << " " << endl;
+				cout << data_line[this->natvar[it2->second]->index]<< endl;
+		}
+			
+
+
+
+		if(false)//data_line.size() != config[i].datas.size())// check if there is no blanks from the original header size
+		{
+			std::cout 	
+			<< CONSOL_RED_TEXT  << "The line "
+			<< CONSOL_CYAN_TEXT <<"xxx"
+			<<CONSOL_RED_TEXT <<" has incorrect number of columns" 
+			<< std::endl;
+			exit(1);
+		}
+	}
+}
+
+//***********************
+//Cout operator << Output
+//***********************
+std::ostream& operator<<( std::ostream& out, const NatVariable& var)
+{
+	out << var.name << "[" << var.unit << "]" << "[" << var.error << "]";
+	return out;
+}
 
 //***********************
 //NATOMI HEADER PARSE
@@ -345,6 +407,7 @@ MetaName natParseHeader(vector<std::string> input){
 	<<"^^^^^^^^^^^^^^^^"<<endl;
 
 	MetaName varmap;
+	size_t index(0);
 	for(auto & t:input){
 		NatVariable* n = new NatVariable();
 
@@ -385,14 +448,19 @@ MetaName natParseHeader(vector<std::string> input){
 			}
 		}
 		i++;
+	
+		n->index = index;
+		index++;
 
+		//===========================================================================
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"read    : "<<CONSOL_CYAN_TEXT<<t<<endl;
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"name    : "<<CONSOL_NORMAL_TEXT<<n->name<<endl;
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"unit    : "<<CONSOL_NORMAL_TEXT<<n->unit<<endl;
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"error   : "<<CONSOL_NORMAL_TEXT<<n->error<<endl;
-		//cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"expr : "<<CONSOL_NORMAL_TEXT<<n.expr<<endl;
+		cout<<CONSOL_LIGHTGRAY_TEXT<<"--> "<<"index : "<<CONSOL_NORMAL_TEXT<<n->index<<endl;
 		cout<<CONSOL_LIGHTGRAY_TEXT<<"-->"<<"==================="<<endl;
 
+		//===========================================================
 		varmap.insert( pair<std::string,NatVariable*>( n->name , n));
 	}
 
@@ -433,15 +501,17 @@ bool natParseHeader(NatConfig& config)
 			<<CONSOL_RED_TEXT<<"\" is empty."<<endl;
 			ret=false;
 		}
+
 		//Parsing Header Files of datas en then mapping variables
 		//=======================================================
 		MetaName tmp_map = natParseHeader(data_line);
-		config.natvar.insert(tmp_map.begin(), tmp_map.end());
+		for( MetaName::iterator it2 = tmp_map.begin(); it2 != tmp_map.end(); ++it2 )
+			config.natvar.insert(pair<string, NatVariable*>(it->first+"::"+it2->first, it2->second));
 
 		//Mapping the string name of datas to collection of vars datas name
 		//=================================================================
 		for( MetaName::iterator it2 = tmp_map.begin(); it2 != tmp_map.end(); ++it2)
-			datatovar.insert(pair<string, string>(it->first, it2->first));
+			datatovar.insert(pair<string, string>(it->first, it->first+"::"+it2->first));
 
 		//Cleaning the data_line to avoid conflicts:
 		data_line.clear();

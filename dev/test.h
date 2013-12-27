@@ -2,6 +2,8 @@
 #define TEST_CC
 
 #include "natomi.h"
+#include "consol_color.h"
 
 void test_Parser(std::vector<NatConfig> config);
+void test_TextOut(std::vector<NatConfig> config);
 #endif
