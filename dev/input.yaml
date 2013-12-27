@@ -12,7 +12,8 @@ variables:
    in: myData2::U
  - name: Agent_LucGirod
    in: myData2::Temps
-   expr: Agent_W + Agent_Z#what if Agent_W doesnt exist?
+   expr: Agent_X + Agent_Z
+#what if Agent_X doesnt exist?
 ###########################
 text:
   - path: prout_caca.net

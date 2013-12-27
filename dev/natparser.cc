@@ -205,10 +205,22 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 				metoname.erase(str);
 			}
 		}//=========================================================
-		if(node[i].FindValue("expr") && ret)
+		if(node[i].FindValue("expr") && ret)//MAYBE REMOVE RET SOON TODO
 		{
 			//==================================== //TODO CONVERT STR To GINAC
-			node[i]["expr"]>>vars[str]->expr;
+			std::string formula;
+			node[i]["expr"]>>vars[str]->expr;				//TODO GET THE VAR EN COMPARE
+			/*if(metoname.find(str3)!=metoname.end())
+			{
+				cout
+				<<CONSOL_RED_TEXT<<"ERROR : (line"
+				<<CONSOL_CYAN_TEXT<< 666
+				<<CONSOL_RED_TEXT<<") Natvar "
+				<<CONSOL_CYAN_TEXT<<str3
+				<<CONSOL_RED_TEXT<<" has been redifined"
+				<<endl<<CONSOL_NORMAL_TEXT;
+				ret=false;//FAIRE DES EXIT(0) plus cool TODO
+			}*/
 		}
 	}
 	return ret;	
@@ -260,7 +272,7 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 		ret = false;
 	if(! (node["variables"] >> config.natvar))
 		ret= false;
-	config.traduc.insert(metoname.begin(), metoname.end());
+	config.traduc.insert(metoname.begin(), metoname.end());//Copy translator
 
 	if(node.FindValue("text")){
 		if(!(node["text"] >> config.text))
@@ -294,11 +306,9 @@ void NatConfig::updateVars()
 		for(MetaName::iterator it2 = this->natvar.begin(); it2 != this->natvar.end();it2++)
 		{
 			if(it2->first.find(it->first))
-				cout << it2->first << " " << data_line[it2->second->index]<< endl;
+				it2->second->value=data_line[it2->second->index];
 		}
 		
-
-
 		if(false)//data_line.size() != config[i].datas.size())// check if there is no blanks from the original header size
 		{
 			std::cout 	

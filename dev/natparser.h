@@ -18,6 +18,7 @@ struct NatVariable{
 	std::string error;
 	std::string expr;
 	size_t index;
+	std::string value;//CAST TO DOUBLE TODO
 };
 
 typedef std::map<std::string, NatVariable*> MetaName;

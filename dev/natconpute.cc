@@ -16,7 +16,7 @@ double StrToDouble(std::string const& s)
 }
 
 //Main function
-GiNaC::ex natConPute(const std::string& formula, std::vector<std::string>& line, std::map<std::string,size_t> dataName_str2num)
+GiNaC::ex natConPute(const std::string& formula, MetaName& vars, NatTrouDuc traduc)
 {
 	//Define the parser, symbol table and exypression to evaluate
     GiNaC::parser reader;
@@ -29,10 +29,10 @@ GiNaC::ex natConPute(const std::string& formula, std::vector<std::string>& line,
 	for(GiNaC::symtab::iterator it = table.begin();
 		it != table.end(); ++it)
 	{
-		size_t id(dataName_str2num[it->first]);
+		std::string val = vars[traduc[it->first]]->value;
 
-		if(!std::isnan(StrToDouble(line[id])))
-			e = e.subs(it->second == StrToDouble(line[id]));		
+		if(!std::isnan(StrToDouble(val)))
+			e = e.subs(it->second == StrToDouble(val));		
 		//std::cout << e << " =>" << e.subs(it->second == StrToDouble(line[id])) << std::endl;
 	}
 	//Results/evaluation of the expression after substituing

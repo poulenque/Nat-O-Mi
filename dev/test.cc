@@ -60,8 +60,25 @@ void test_TextOut(std::vector<NatConfig> config)
 			output << std::endl;
 			output.close();
 		}
+
+		//Update the value of the variables to compute or write into output
 		config[i].updateVars();
 
+		//Search for any expressions to compute TODO ALGORYTHM
+		for(MetaName::iterator it = config[i].natvar.begin(); it != config[i].natvar.end();it++)
+		{
+			if(!it->second->expr.empty())
+			{
+				cout << it->second->expr << endl;
+				natConPute(it->second->expr, config[i].natvar,config[i].traduc);//STOPPED HERE TODO TODO TODO
+			}
+		}
+
+
+
+		config[i].updateVars();
+		config[i].updateVars();
+		config[i].updateVars();
 
 
 		/*parseNext;
