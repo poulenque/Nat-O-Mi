@@ -24,6 +24,8 @@ typedef std::map<std::string, NatVariable*> MetaName;
 
 typedef std::map<std::string, std::ifstream*> NatData;
 
+typedef std::map<std::string,std::string> NatTrouDuc;
+
 struct NatOutPute{
 
 	std::vector<std::string> contents;
@@ -34,10 +36,10 @@ struct NatConfig{
 
 	NatConfig();
 
-	GiNaC::symtab variables_;
-
+	NatTrouDuc traduc;
 	MetaName natvar;
 	NatData datas;
+	
 
 	void updateVars();
 
@@ -64,5 +66,7 @@ bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& vars);
 bool operator>>(const YAML::Node& node, NatConfig& config);
 
 std::ostream& operator<<( std::ostream& out, const NatVariable& var);
+
+MetaName::const_iterator findPrefix(const MetaName& map, const std::string& search_for);
 
 #endif

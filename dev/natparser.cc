@@ -14,7 +14,7 @@ using namespace std;
 
 
 
-static 	std::map<std::string,std::string> datatovar;
+static 	NatTrouDuc metoname;
 
 
 //Constructor
@@ -144,26 +144,6 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 			str2 = str.substr (0,pos);
 			str3 = str.substr (pos+2);// avoid the "::"
 
-			//Special, checks if var is in data and keep the boolean
-			//======================================================
-			bool redefinition=false;
-
-			//Equivalent to datatovar[str2]
-   			 pair <multimap<string,string>::iterator, multimap<string,string>::iterator> checker = datatovar.equal_range(str2);
-			for(multimap<string,string>::iterator it=checker.first; it!=checker.second; ++it)
-			{
-				if(it->second==str3)
-				{
-					//Mapping the string name of datas to collection of vars  meta name
-					//=================================================================
-					datatovar.insert( pair<string,string>(str2 , str2+"::"+name));
- 					datatovar.erase(it);
-					break;//TODO beurk?
-				}
-				else if(vars.find(str)==vars.end())
-					redefinition=true;
-			}
-
 			//*************** PRINTS ****************
 			//***************************************
 			//Check if var exists in the global table
@@ -180,7 +160,7 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 			}
 			//Checks if data exist
 			//====================
-			else if(datatovar.find(str2)==datatovar.end())
+			else if(findPrefix(vars, str2)==vars.end())
 			{
 				cout
 				<<CONSOL_RED_TEXT<<"ERROR : (line"
@@ -190,8 +170,8 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 				<<CONSOL_RED_TEXT<<" does not exist!"<<endl<<CONSOL_NORMAL_TEXT;
 				ret=false;
 			}
-			//Use the previous bool result to print if var exists in data
-			//===========================================================
+			//Check if the variable exists in data
+			//====================================
 			else if(vars.find(str)==vars.end())
 			{
 				cout
@@ -204,9 +184,9 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 				<<endl<<CONSOL_NORMAL_TEXT;
 				ret=false;//FAIRE DES EXIT(0) plus cool TODO
 			}
-			//Use the previous bool result to print if var is re-renamed in config
-			//====================================================================
-			else if(redefinition)
+			//Check if any vars has been redefined
+			//====================================
+			else if(metoname.find(str3)!=metoname.end())
 			{
 				cout
 				<<CONSOL_RED_TEXT<<"ERROR : (line"
@@ -221,14 +201,14 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 			{
 				//Mapping the string name of meta name to corresponding var
 				//=========================================================
-				//vars.insert( pair<string,NatVariable*>(name , vars[str]));
- 				//vars.erase(str);
+				metoname.insert( pair<string,string>(name , str));
+				metoname.erase(str);
 			}
 		}//=========================================================
 		if(node[i].FindValue("expr") && ret)
 		{
 			//==================================== //TODO CONVERT STR To GINAC
-			//node[i]["expr"]>>vars[name]->expr;
+			node[i]["expr"]>>vars[str]->expr;
 		}
 	}
 	return ret;	
@@ -280,6 +260,7 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 		ret = false;
 	if(! (node["variables"] >> config.natvar))
 		ret= false;
+	config.traduc.insert(metoname.begin(), metoname.end());
 
 	if(node.FindValue("text")){
 		if(!(node["text"] >> config.text))
@@ -293,10 +274,6 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 		if(! (node["gnuplot"] >> config.gnuplot))
 			ret= false;
 	}	
-
-for( 	std::multimap<std::string,std::string>::iterator it = datatovar.begin(); it != datatovar.end(); ++it)
-	cout << it->first << " " << it->second << endl;
-
 	return ret;
 }
 
@@ -312,17 +289,14 @@ void NatConfig::updateVars()
 	{
 		natParseNext(it->second,data_line);//TODO wierd wierd avoid the bool return
 
-		//Equivalent to datatovar[it->first]
-		pair <multimap<string,string>::iterator, multimap<string,string>::iterator> checker = datatovar.equal_range(it->first);
-		for(multimap<string,string>::iterator it2=checker.first; it2!=checker.second; ++it2)	{
-				cout << it->first << " " << endl;
-				cout << it2->second << " " << endl;
-				cout << this->natvar[it2->second] << " " << endl;
-				cout << this->natvar[it2->second]->index << " " << endl;
-				cout << data_line[this->natvar[it2->second]->index]<< endl;
-		}
-			
 
+		//OPTIMISER L'ALGO!!! parcour trop de truc TODO
+		for(MetaName::iterator it2 = this->natvar.begin(); it2 != this->natvar.end();it2++)
+		{
+			if(it2->first.find(it->first))
+				cout << it2->first << " " << data_line[it2->second->index]<< endl;
+		}
+		
 
 
 		if(false)//data_line.size() != config[i].datas.size())// check if there is no blanks from the original header size
@@ -506,15 +480,26 @@ bool natParseHeader(NatConfig& config)
 		//=======================================================
 		MetaName tmp_map = natParseHeader(data_line);
 		for( MetaName::iterator it2 = tmp_map.begin(); it2 != tmp_map.end(); ++it2 )
-			config.natvar.insert(pair<string, NatVariable*>(it->first+"::"+it2->first, it2->second));
-
-		//Mapping the string name of datas to collection of vars datas name
-		//=================================================================
-		for( MetaName::iterator it2 = tmp_map.begin(); it2 != tmp_map.end(); ++it2)
-			datatovar.insert(pair<string, string>(it->first, it->first+"::"+it2->first));
-
+		{	config.natvar.insert(pair<string, NatVariable*>(it->first+"::"+it2->first, it2->second));
+			metoname.insert(pair<string, string>(it->first+"::"+it2->first, it->first+"::"+it2->first));
+		}
 		//Cleaning the data_line to avoid conflicts:
 		data_line.clear();
 	}
 	return ret;
+}
+
+
+//TODO move somewhere else with other stuff? also typedef the map??
+//*******************************
+//Function to find prefix of maps
+//*******************************
+MetaName::const_iterator findPrefix(const MetaName& map, const string& search_for) {
+    MetaName::const_iterator i = map.lower_bound(search_for);
+    if (i != map.end()) {
+        const string& key = i->first;
+        if (key.compare(0, search_for.size(), search_for) == 0) // Really a prefix?
+            return i;
+    }
+    return map.end();
 }

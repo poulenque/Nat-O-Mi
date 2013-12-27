@@ -54,8 +54,8 @@ void test_TextOut(std::vector<NatConfig> config)
 		{
 			std::ofstream output(config[i].text[j].path);
 
-			for(size_t k(0);k <  config[i].text[j].contents.size();k++)	
-				output << *config[i].natvar[config[i].text[j].contents[k]] << " ";
+			for(size_t k(0);k <  config[i].text[j].contents.size();k++)
+				output << *config[i].natvar[config[i].traduc[config[i].text[j].contents[k]]] << " " ;
 
 			output << std::endl;
 			output.close();
