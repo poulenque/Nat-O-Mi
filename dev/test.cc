@@ -42,44 +42,35 @@ void test_Parser(std::vector<NatConfig> config)
 	}
 }
 
-void test_TextOut(std::vector<NatConfig> config)
+void test_Working(std::vector<NatConfig> config)
 {
 	for(size_t i(0);i < config.size();i++)
 	{
-		//Print  Output:
-		std::cout << "\n TESTING Output:" << std::endl;
-		std::cout << "\nText:" << std::endl;
+		std::cout << "\n TESTING Working:" << std::endl;
+		std::cout << "GLA:" << std::endl;	
 
-		for(size_t j(0);j <  config[i].text.size();j++)
-		{
-			std::ofstream output(config[i].text[j].path);
-
-			for(size_t k(0);k <  config[i].text[j].contents.size();k++)
-				output << *config[i].natvar[config[i].traduc[config[i].text[j].contents[k]]] << " " ;
-
-			output << std::endl;
-			output.close();
-		}
+		//Print the Headers into the different kind of outputs		
+		//===================================================
+		config[i].printText(1);
+		config[i].printLaTeX(1);
 
 		//Update the value of the variables to compute or write into output
-		config[i].updateVars();
-
-		//Search for any expressions to compute TODO ALGORYTHM
-		for(MetaName::iterator it = config[i].natvar.begin(); it != config[i].natvar.end();it++)
+		while(config[i].updateVars())
 		{
-			if(!it->second->expr.empty())
-			{
-				cout << it->second->expr << endl;
-				natConPute(it->second->expr, config[i].natvar,config[i].traduc);//STOPPED HERE TODO TODO TODO
-			}
-		}
+			//Compute all exprs from Expressions vetor
+			//========================================
+			//TODO function for that? or put natConPute back in natconpute.cc
+			for(size_t j(0);j < config[i].natexprs.size(); j++)
+				config[i].natexprs[j]->natConPute(config[i].traduc, config[i].natvar);
+			
+			//Print the line into the different kind of outputs		
+			//=================================================
+			config[i].printText();
+			config[i].printLaTeX();
+			config[i].printGNUplot();
 
-
-
-		config[i].updateVars();
-		config[i].updateVars();
-		config[i].updateVars();
-
+		}	
+		cout << "The end" << endl;
 
 		/*parseNext;
 

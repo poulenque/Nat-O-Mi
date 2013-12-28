@@ -14,12 +14,16 @@ using namespace std;
 
 
 
-static 	NatTrouDuc metoname;
+static NatTrouDuc metoname;
 
 
-//Constructor
+//Constructor TODO COMPLETE
 NatConfig::NatConfig(){}
+NatExpressions::NatExpressions(){}
 NatVariable::NatVariable(){}
+NatVariable::NatVariable(const std::string& n,const Unit& u, const std::string& e):
+name(n),unit(u),error(e){}
+
 
 //****************************************
 //Parsing several configuration files YAML
@@ -135,95 +139,123 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 			cout.flush();
 			ret=false;
 		}
-		//Check if var or expr exists, else it stops
-		//==========================================
-		if(node[i].FindValue("in"))
-		{
-			node[i]["in"]>>str;
-			size_t pos = str.find("::");
-			str2 = str.substr (0,pos);
-			str3 = str.substr (pos+2);// avoid the "::"
+		node[i]["in"]>>str;
+		size_t pos = str.find("::");
+		str2 = str.substr (0,pos);
+		str3 = str.substr (pos+2);// avoid the "::"
 
-			//*************** PRINTS ****************
-			//***************************************
-			//Check if var exists in the global table
-			//=======================================
-			if(pos==string::npos)
-			{
-				cout
-				<<CONSOL_RED_TEXT<<"ERROR : (line"
-				<<CONSOL_CYAN_TEXT<< 666
-				<<CONSOL_RED_TEXT<<") variable "
-				<<CONSOL_CYAN_TEXT<<str
-				<<CONSOL_RED_TEXT<<"\'s data missing (format should be myData::var)"<<endl<<CONSOL_NORMAL_TEXT;
-				ret=false;
-			}
-			//Checks if data exist
-			//====================
-			else if(findPrefix(vars, str2)==vars.end())
-			{
-				cout
-				<<CONSOL_RED_TEXT<<"ERROR : (line"
-				<<CONSOL_CYAN_TEXT<< 666
-				<<CONSOL_RED_TEXT<<") data "
-				<<CONSOL_CYAN_TEXT<<str2
-				<<CONSOL_RED_TEXT<<" does not exist!"<<endl<<CONSOL_NORMAL_TEXT;
-				ret=false;
-			}
-			//Check if the variable exists in data
-			//====================================
-			else if(vars.find(str)==vars.end())
-			{
-				cout
-				<<CONSOL_RED_TEXT<<"ERROR : (line"
-				<<CONSOL_CYAN_TEXT<< 666
-				<<CONSOL_RED_TEXT<<") var "
-				<<CONSOL_CYAN_TEXT<<str3
-				<<CONSOL_RED_TEXT<<" does not exist, in data:"
-				<<CONSOL_CYAN_TEXT<<str2
-				<<endl<<CONSOL_NORMAL_TEXT;
-				ret=false;//FAIRE DES EXIT(0) plus cool TODO
-			}
-			//Check if any vars has been redefined
-			//====================================
-			else if(metoname.find(str3)!=metoname.end())
-			{
-				cout
-				<<CONSOL_RED_TEXT<<"ERROR : (line"
-				<<CONSOL_CYAN_TEXT<< 666
-				<<CONSOL_RED_TEXT<<") var "
-				<<CONSOL_CYAN_TEXT<<str3
-				<<CONSOL_RED_TEXT<<" has been redifined"
-				<<endl<<CONSOL_NORMAL_TEXT;
-				ret=false;//FAIRE DES EXIT(0) plus cool TODO
-			}	
-			else
-			{
-				//Mapping the string name of meta name to corresponding var
-				//=========================================================
-				metoname.insert( pair<string,string>(name , str));
-				metoname.erase(str);
-			}
-		}//=========================================================
-		if(node[i].FindValue("expr") && ret)//MAYBE REMOVE RET SOON TODO
+		//*************** PRINTS ****************
+		//***************************************
+		//Check if var exists in the global table
+		//=======================================
+		if(pos==string::npos)
 		{
-			//==================================== //TODO CONVERT STR To GINAC
-			std::string formula;
-			node[i]["expr"]>>vars[str]->expr;				//TODO GET THE VAR EN COMPARE
-			/*if(metoname.find(str3)!=metoname.end())
-			{
+			cout
+			<<CONSOL_RED_TEXT<<"ERROR : (line"
+			<<CONSOL_CYAN_TEXT<< 666
+			<<CONSOL_RED_TEXT<<") variable "
+			<<CONSOL_CYAN_TEXT<<str
+			<<CONSOL_RED_TEXT<<"\'s data missing (format should be myData::var)"<<endl<<CONSOL_NORMAL_TEXT;
+			ret=false;
+		}
+		//Checks if data exist
+		//====================
+		else if(findPrefix(vars, str2)==vars.end())
+		{
+			cout
+			<<CONSOL_RED_TEXT<<"ERROR : (line"
+			<<CONSOL_CYAN_TEXT<< 666
+			<<CONSOL_RED_TEXT<<") data "
+			<<CONSOL_CYAN_TEXT<<str2
+			<<CONSOL_RED_TEXT<<" does not exist!"<<endl<<CONSOL_NORMAL_TEXT;
+			ret=false;
+		}
+		//Check if the variable exists in data
+		//====================================
+		else if(vars.find(str)==vars.end())
+		{
+			cout
+			<<CONSOL_RED_TEXT<<"ERROR : (line"
+			<<CONSOL_CYAN_TEXT<< 666
+			<<CONSOL_RED_TEXT<<") var "
+			<<CONSOL_CYAN_TEXT<<str3
+			<<CONSOL_RED_TEXT<<" does not exist, in data:"
+			<<CONSOL_CYAN_TEXT<<str2
+			<<endl<<CONSOL_NORMAL_TEXT;
+			ret=false;//FAIRE DES EXIT(0) plus cool TODO
+		}
+		//Check if any vars has been redefined
+		//====================================
+		else if(metoname.find(str3)!=metoname.end())
+		{
+			cout
+			<<CONSOL_RED_TEXT<<"ERROR : (line"
+			<<CONSOL_CYAN_TEXT<< 666
+			<<CONSOL_RED_TEXT<<") var "
+			<<CONSOL_CYAN_TEXT<<str3
+			<<CONSOL_RED_TEXT<<" has been redifined"
+			<<endl<<CONSOL_NORMAL_TEXT;
+			ret=false;//FAIRE DES EXIT(0) plus cool TODO
+		}	
+		else
+		{
+			//Mapping the string name of meta name to corresponding var
+			//=========================================================
+			metoname.insert( pair<string,string>(name , str));
+			metoname.erase(str);
+		}
+	}
+	return ret;	
+}
+//****************************
+//YAML operator >> Expressions
+//****************************
+bool operator>>(const YAML::Node& node, std::vector<NatExpressions*>& exprs)
+{
+	std::string name;
+	std::string formula;
+	bool ret=true;
+	for(size_t i=0 ; i< node.size(); i++){
+
+		NatExpressions* natexpr = new NatExpressions;
+		//===================================
+		node[i]["name"]>>natexpr->resultvar;
+
+		//************* EXPRESSIONS *************
+		//***************************************
+		//=================================== //TODO CONVERT STR To GINAC
+		node[i]["expr"]>>formula;	
+		//===================================
+
+		natexpr->exp = natexpr->reader(formula);
+		//Get the symbol from the expression and write it down to a table
+		natexpr->table = natexpr->reader.get_syms();
+
+		//Look if all the vars has been declared previously
+		//=================================================
+		for(GiNaC::symtab::iterator it = natexpr->table.begin();
+			it != natexpr->table.end(); ++it)
+		{
+			if(metoname.find(it->first)==metoname.end())//FAIRE UNE FONCTION TEST TODO
+			{	
 				cout
 				<<CONSOL_RED_TEXT<<"ERROR : (line"
 				<<CONSOL_CYAN_TEXT<< 666
 				<<CONSOL_RED_TEXT<<") Natvar "
-				<<CONSOL_CYAN_TEXT<<str3
-				<<CONSOL_RED_TEXT<<" has been redifined"
+				<<CONSOL_CYAN_TEXT<<it->first
+				<<CONSOL_RED_TEXT<<" does not exist"
 				<<endl<<CONSOL_NORMAL_TEXT;
 				ret=false;//FAIRE DES EXIT(0) plus cool TODO
-			}*/
+			}
 		}
+		//===================================
+		exprs.push_back(natexpr);
+
+		//Insert the new variable into the tmp traduc map
+		//===============================================
+		metoname.insert( pair<string,string>(natexpr->resultvar , natexpr->resultvar));
 	}
-	return ret;	
+	return ret;
 }
 //************************
 //YAML operator >> Outputs
@@ -242,7 +274,7 @@ bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& outs){
 		node[i]["path"]>>path;
 		ofstream output(path);
 
-		if(!output.is_open())
+		if(!output.is_open())//TODO VERIFIER QU'IL N ECRASE PAS UN FICHIER EXISTANT
 		{
 			cout<<CONSOL_RED_TEXT<<"could not open file"<<CONSOL_CYAN_TEXT<<path<< endl<<CONSOL_NORMAL_TEXT;
 			ret=false;
@@ -255,6 +287,18 @@ bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& outs){
 			std::string content;
 	 		content_node[j] >> content;
 	 		outs.back().contents.push_back(content);
+
+			if(metoname.find(content)==metoname.end())//FAIRE UNE FONCTION TEST TODO
+			{	
+				cout
+				<<CONSOL_RED_TEXT<<"ERROR : (line"
+				<<CONSOL_CYAN_TEXT<< 666
+				<<CONSOL_RED_TEXT<<") Natvar "
+				<<CONSOL_CYAN_TEXT<<content
+				<<CONSOL_RED_TEXT<<" does not exist"
+				<<endl<<CONSOL_NORMAL_TEXT;
+				ret=false;//FAIRE DES EXIT(0) plus cool TODO
+			}
 		}
 	}
 	return ret;
@@ -268,11 +312,21 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 
 	if(! (node["data"]>> config.datas))
 		ret= false;
-	if(!natParseHeader(config))//Parsing files to check
+
+	//Parsing files to check
+	//======================
+	if(!natParseHeader(config))
 		ret = false;
+
 	if(! (node["variables"] >> config.natvar))
 		ret= false;
-	config.traduc.insert(metoname.begin(), metoname.end());//Copy translator
+	if(! (node["expressions"] >> config.natexprs))
+		ret= false;
+
+	//Refreshing all maps for checks
+	//==============================
+	config.updateMaps(metoname);
+
 
 	if(node.FindValue("text")){
 		if(!(node["text"] >> config.text))
@@ -288,39 +342,105 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 	}	
 	return ret;
 }
+//***********************
+//Config update Maps Func
+//***********************
+void NatConfig::updateMaps(const NatTrouDuc& map)
+{
+	//Copy translator
+	//===============
+	this->traduc.insert(map.begin(), map.end());
 
+	//Add vars from Node expression to VarsMap
+	//========================================
+	for(NatTrouDuc::const_iterator it = map.begin();it != map.end(); ++it)
+	{
+		if(this->natvar.find(it->second)==this->natvar.end())
+			this->natvar.insert(pair<string,NatVariable*>(it->second, new NatVariable(it->second, Unit(), "*")));}
+}
 //***********************
 //Config update vars Func
 //***********************
-void NatConfig::updateVars()
+bool NatConfig::updateVars()
 {
-	//	foreach output_text, output_latex, output_gnuplot
 	std::vector<std::string> data_line;
+
 	//update var_value;//global so there is no mistakes
-	for( NatData::iterator it = this->datas.begin(); it != this->datas.end(); ++it)
+	//=================================================
+	for(NatData::iterator it = this->datas.begin(); it != this->datas.end(); ++it)
 	{
-		natParseNext(it->second,data_line);//TODO wierd wierd avoid the bool return
+		if(!natParseNext(it->second,data_line))
+			return false;
 
 
-		//OPTIMISER L'ALGO!!! parcour trop de truc TODO
-		for(MetaName::iterator it2 = this->natvar.begin(); it2 != this->natvar.end();it2++)
+		//Check if there is the good number of columns
+		//============================================
+		//TODO FIND BETTER ALGORYTHM WITH A NEW MAP OR RECHANGE STRUCT VARS
+		//OR PLACING HINTS IN THE MAP
+		size_t varcount(0);
+		for(MetaName::iterator it2 = this->natvar.begin(); data_line.size()<=varcount, it2 != this->natvar.end();it2++)
 		{
-			if(it2->first.find(it->first))
+			if(it2->first.find(it->first)==0)//slow
+			{
 				it2->second->value=data_line[it2->second->index];
+				varcount++;
+			}
 		}
-		
-		if(false)//data_line.size() != config[i].datas.size())// check if there is no blanks from the original header size
+
+		//Check if there is the good number of columns
+		//============================================
+		if(data_line.size()!=varcount)
 		{
 			std::cout 	
 			<< CONSOL_RED_TEXT  << "The line "
 			<< CONSOL_CYAN_TEXT <<"xxx"
 			<<CONSOL_RED_TEXT <<" has incorrect number of columns" 
 			<< std::endl;
-			exit(1);
+			return false;
 		}
+		//Cleaning the data_line to avoid conflicts:
+		data_line.clear();
+	}		
+	return true;
+}
+//***************************
+//NatConfig printings methods
+//***************************
+void NatConfig::printText(bool NatHeader)
+{
+	for(size_t j(0);j <  this->text.size();j++)
+	{
+		//Opening the outputfile //TODO check for errors in opening for ret value
+		std::ofstream output(this->text[j].path, ios_base::app);
+
+		//Only the first time, writing the heading files
+		if(NatHeader)
+		{
+			for(size_t k(0);k <  this->text[j].contents.size();k++)
+				output << *this->natvar[this->traduc[this->text[j].contents[k]]] << " " ;
+		}
+		else
+		{	for(size_t k(0);k <  this->text[j].contents.size();k++)
+				output << this->natvar[this->traduc[this->text[j].contents[k]]]->value << " " ;//TODO ASK FOR SEPERATOR
+		}
+		
+		output << std::endl;
+		output.close();
 	}
 }
 
+//TODO,NB: GiNaC allows to print in latex format
+//Could be cool!
+void NatConfig::printLaTeX(bool NatHeader)
+{
+	//TODO soon
+
+}
+void NatConfig::printGNUplot()
+{
+	//TODO???????????????
+
+}
 //***********************
 //Cout operator << Output
 //***********************
@@ -493,6 +613,7 @@ bool natParseHeader(NatConfig& config)
 		{	config.natvar.insert(pair<string, NatVariable*>(it->first+"::"+it2->first, it2->second));
 			metoname.insert(pair<string, string>(it->first+"::"+it2->first, it->first+"::"+it2->first));
 		}
+
 		//Cleaning the data_line to avoid conflicts:
 		data_line.clear();
 	}
@@ -500,7 +621,7 @@ bool natParseHeader(NatConfig& config)
 }
 
 
-//TODO move somewhere else with other stuff? also typedef the map??
+//TODO move somewhere else with other stuff? template??
 //*******************************
 //Function to find prefix of maps
 //*******************************

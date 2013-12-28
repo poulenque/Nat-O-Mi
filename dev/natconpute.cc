@@ -16,28 +16,28 @@ double StrToDouble(std::string const& s)
 }
 
 //Main function
-GiNaC::ex natConPute(const std::string& formula, MetaName& vars, NatTrouDuc traduc)
+void NatExpressions::natConPute(NatTrouDuc& traduc, MetaName& vars)
 {
-	//Define the parser, symbol table and exypression to evaluate
-    GiNaC::parser reader;
-	GiNaC::symtab table;
-	GiNaC::ex e = reader(formula);
-	//Get the symbol from the expression and write it down to a table
-	table = reader.get_syms();
+    GiNaC::Digits = 5; //TODO ask for precision after dot
+	GiNaC::ex eq = this->exp;
+	std::string val;
 
 	//Substitue each variable by its actual value from the line
-	for(GiNaC::symtab::iterator it = table.begin();
-		it != table.end(); ++it)
+	//=========================================================
+	for(GiNaC::symtab::const_iterator it = this->table.begin();it != this->table.end(); ++it)
 	{
-		std::string val = vars[traduc[it->first]]->value;
+		val = vars[traduc[it->first]]->value;
 
 		if(!std::isnan(StrToDouble(val)))
-			e = e.subs(it->second == StrToDouble(val));		
-		//std::cout << e << " =>" << e.subs(it->second == StrToDouble(line[id])) << std::endl;
+			eq = eq.subs(it->second == StrToDouble(val));		
+		//std::cout << eq << " =>" << eq.subs(it->second == StrToDouble(val)) << std::endl;
 	}
-	//Results/evaluation of the expression after substituing
-	
-	return e;
+
+	//Put the value of the equation to the resultvar
+	//==============================================
+	std::ostringstream s;
+	s << eq;
+	vars[traduc[this->resultvar]]->value = s.str();
 }
 
 

@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 		exit(1);//Leave the buggy program!
 
 	test_Parser(test);
-	test_TextOut(test);
+	test_Working(test);
 
 
 	return 0;

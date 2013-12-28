@@ -13,10 +13,11 @@
 struct NatVariable{
 
 	NatVariable();
+	NatVariable(const std::string& name,const Unit& unit, const std::string& error);
+
 	std::string name;
 	Unit unit;
 	std::string error;
-	std::string expr;
 	size_t index;
 	std::string value;//CAST TO DOUBLE TODO
 };
@@ -26,6 +27,20 @@ typedef std::map<std::string, NatVariable*> MetaName;
 typedef std::map<std::string, std::ifstream*> NatData;
 
 typedef std::map<std::string,std::string> NatTrouDuc;
+
+struct NatExpressions{
+
+	NatExpressions();
+
+	void natConPute(NatTrouDuc& traduc, MetaName& vars);//CORE IN NATCONPUTE TODO MOVE THIS STRUCT THERE
+
+	//Define the parser, symbol table and exypression to evaluate
+	GiNaC::parser reader;
+	GiNaC::symtab table;
+	GiNaC::ex exp;
+	//string of the metaname var to traduc
+	std::string resultvar;
+};
 
 struct NatOutPute{
 
@@ -37,12 +52,17 @@ struct NatConfig{
 
 	NatConfig();
 
+	void updateMaps(const NatTrouDuc& map);
+	bool updateVars();
+	void printText(bool NatHeader=false);
+	void printLaTeX(bool NatHeader=false);
+	void printGNUplot();
+
+
 	NatTrouDuc traduc;
 	MetaName natvar;
 	NatData datas;
-	
-
-	void updateVars();
+	std::vector<NatExpressions*> natexprs; // must be pointers cuz GiNaC is special
 
 	std::vector<NatOutPute> text;
 	std::vector<NatOutPute> latex;
@@ -63,8 +83,10 @@ MetaName natParseHeader(std::vector<std::string> input);
 
 bool operator>>(const YAML::Node& node, NatData& datas);
 bool operator>>(const YAML::Node& node, MetaName& vars);
+bool operator>>(const YAML::Node& node, std::vector<NatExpressions*>& expr);
 bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& vars);
 bool operator>>(const YAML::Node& node, NatConfig& config);
+
 
 std::ostream& operator<<( std::ostream& out, const NatVariable& var);
 
