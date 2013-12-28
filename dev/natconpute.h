@@ -14,5 +14,3 @@ std::string DoubleToStr(double const& dbl);
 
 // main program
 GiNaC::ex natDerive(const std::string& formula, const std::string& var, unsigned int nth);
-
-GiNaC::ex natUncerError(const std::string& formula, const std::vector<NatVariable>& data_vars, std::map<std::string,size_t> dataName_str2num);

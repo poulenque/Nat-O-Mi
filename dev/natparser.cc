@@ -143,6 +143,16 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 		size_t pos = str.find("::");
 		str2 = str.substr (0,pos);
 		str3 = str.substr (pos+2);// avoid the "::"
+		
+		//Checks if there is a redfinition of data vars which is stupid
+		//=============================================================
+		bool redifinition(false);
+		for(NatTrouDuc::const_iterator it = metoname.begin();it != metoname.end();
+		 ++it){
+			if(it->second==str){	
+				redifinition=true;
+				break;}
+		}
 
 		//*************** PRINTS ****************
 		//***************************************
@@ -186,13 +196,13 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 		}
 		//Check if any vars has been redefined
 		//====================================
-		else if(metoname.find(str3)!=metoname.end())
+		else if(redifinition)
 		{
 			cout
 			<<CONSOL_RED_TEXT<<"ERROR : (line"
 			<<CONSOL_CYAN_TEXT<< 666
 			<<CONSOL_RED_TEXT<<") var "
-			<<CONSOL_CYAN_TEXT<<str3
+			<<CONSOL_CYAN_TEXT<<str
 			<<CONSOL_RED_TEXT<<" has been redifined"
 			<<endl<<CONSOL_NORMAL_TEXT;
 			ret=false;//FAIRE DES EXIT(0) plus cool TODO
@@ -202,7 +212,6 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 			//Mapping the string name of meta name to corresponding var
 			//=========================================================
 			metoname.insert( pair<string,string>(name , str));
-			metoname.erase(str);
 		}
 	}
 	return ret;	
@@ -219,8 +228,8 @@ bool operator>>(const YAML::Node& node, std::vector<NatExpressions*>& exprs)
 
 		NatExpressions* natexpr = new NatExpressions;
 		//===================================
-		node[i]["name"]>>natexpr->resultvar;
-
+		node[i]["name"]>>name;
+		natexpr->resultvar = name;
 		//************* EXPRESSIONS *************
 		//***************************************
 		//=================================== //TODO CONVERT STR To GINAC
@@ -230,6 +239,7 @@ bool operator>>(const YAML::Node& node, std::vector<NatExpressions*>& exprs)
 		natexpr->exp = natexpr->reader(formula);
 		//Get the symbol from the expression and write it down to a table
 		natexpr->table = natexpr->reader.get_syms();
+
 
 		//Look if all the vars has been declared previously
 		//=================================================
@@ -251,9 +261,12 @@ bool operator>>(const YAML::Node& node, std::vector<NatExpressions*>& exprs)
 		//===================================
 		exprs.push_back(natexpr);
 
-		//Insert the new variable into the tmp traduc map
-		//===============================================
-		metoname.insert( pair<string,string>(natexpr->resultvar , natexpr->resultvar));
+		//Insert the new variable into the tmp traduc map /\ the error varriable
+		//======================================================================
+		metoname.insert( pair<string,string>(name, name));
+		//TODO PUT A HINT 
+		metoname.insert( pair<string,string>(name+NatErrorSuffix , name+NatErrorSuffix));
+
 	}
 	return ret;
 }
@@ -300,6 +313,17 @@ bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& outs){
 				ret=false;//FAIRE DES EXIT(0) plus cool TODO
 			}
 		}
+		
+		//Caption node for text, latex, etc...
+		//====================================
+		if(const YAML::Node *caption = node[i].FindValue("caption"))
+    		*caption >> outs.back().caption;
+
+		//Label node for text, latex, etc...
+		//==================================
+		if(const YAML::Node *label = node[i].FindValue("label"))
+    		*label >> outs.back().label;
+
 	}
 	return ret;
 }
@@ -353,11 +377,18 @@ void NatConfig::updateMaps(const NatTrouDuc& map)
 
 	//Add vars from Node expression to VarsMap
 	//========================================
+
+	//TODO ALGORYTHM, apply the expression error also :)
 	for(NatTrouDuc::const_iterator it = map.begin();it != map.end(); ++it)
 	{
-		if(this->natvar.find(it->second)==this->natvar.end())
-			this->natvar.insert(pair<string,NatVariable*>(it->second, new NatVariable(it->second, Unit(), "*")));}
+		if(this->natvar.find(it->second)==this->natvar.end() && it->second.find(NatErrorSuffix) == std::string::npos)
+			this->natvar.insert(pair<string,NatVariable*>(it->second, new NatVariable(it->second, Unit(), it->second+NatErrorSuffix)));
+
+		else if(it->second.find(NatErrorSuffix) != std::string::npos)
+			this->natvar.insert(pair<string,NatVariable*>(it->second, new NatVariable(it->second, Unit("N/A"), "N/A")));
+	}
 }
+
 //***********************
 //Config update vars Func
 //***********************
@@ -431,10 +462,47 @@ void NatConfig::printText(bool NatHeader)
 
 //TODO,NB: GiNaC allows to print in latex format
 //Could be cool!
-void NatConfig::printLaTeX(bool NatHeader)
-{
-	//TODO soon
 
+//TODO BWERK GO PUT THIS IN A CLASS!
+void NatConfig::printLaTeX(size_t NatHeader)
+{
+	for(size_t j(0);j < this->latex.size();j++)
+	{
+		//Opening the outputfile //TODO check for errors in opening for ret value
+		std::ofstream output(this->latex[j].path, ios_base::app);
+
+  		if(NatHeader==1)//TODO enum or define
+		{
+			output << "%This file is generated with N@-O-Mi-3.0" << std::endl;//Beurk?
+
+			output << "\\begin{table}[h]" << std::endl;
+			output << "\t\\caption{"<< this->latex[j].caption << "}" << "\\label{tab:" << this->latex[j].label << "}" << std::endl;
+			output << "\t\t\\begin{tabular}{";
+			for(unsigned int i(0);i < this->latex[j].contents.size();output << "|l",i++);
+			output << "|}" << std::endl;
+			output << "\t\t\\hline" << std::endl;//tab maybe
+
+			output << "\t\t";
+			unsigned int end(this->latex[j].contents.size()-1);
+			for(unsigned int i(0);i < this->latex[j].contents.size()-1;output << this->natvar[this->traduc[this->latex[j].contents[i]]]->name << " & ",i++);
+			output << this->natvar[this->traduc[this->latex[j].contents[end]]]->name << "\\\\" << " \\hline"<< std::endl;
+		}
+		else if(NatHeader==2)
+		{
+			output << "\t\t";
+			unsigned int end(this->latex[j].contents.size()-1);
+			for(unsigned int i(0);i < this->latex[j].contents.size()-1;output << this->natvar[this->traduc[this->latex[j].contents[i]]]->value << " & ",i++);
+			output << this->natvar[this->traduc[this->latex[j].contents[end]]]->value << "\\\\" << " \\hline"<< std::endl;
+
+		}
+		else if(NatHeader==3)
+		{
+			output << "\t\t\\hline" << std::endl;
+			output << "\t\\end{tabular}" << std::endl;
+			output << "\\end{table}" << std::endl;
+		}
+		output.close();
+	}
 }
 void NatConfig::printGNUplot()
 {
@@ -610,9 +678,7 @@ bool natParseHeader(NatConfig& config)
 		//=======================================================
 		MetaName tmp_map = natParseHeader(data_line);
 		for( MetaName::iterator it2 = tmp_map.begin(); it2 != tmp_map.end(); ++it2 )
-		{	config.natvar.insert(pair<string, NatVariable*>(it->first+"::"+it2->first, it2->second));
-			metoname.insert(pair<string, string>(it->first+"::"+it2->first, it->first+"::"+it2->first));
-		}
+			config.natvar.insert(pair<string, NatVariable*>(it->first+"::"+it2->first, it2->second));
 
 		//Cleaning the data_line to avoid conflicts:
 		data_line.clear();

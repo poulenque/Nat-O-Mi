@@ -10,6 +10,8 @@
 #include <ginac/ginac.h>
 #include "natUtils.h"
 
+#define NatErrorSuffix "_error"
+
 struct NatVariable{
 
 	NatVariable();
@@ -32,7 +34,8 @@ struct NatExpressions{
 
 	NatExpressions();
 
-	void natConPute(NatTrouDuc& traduc, MetaName& vars);//CORE IN NATCONPUTE TODO MOVE THIS STRUCT THERE
+	void natConPute(NatTrouDuc& traduc, MetaName& vars);
+	void natUncerError(NatTrouDuc& traduc, MetaName& vars);//CORE IN NATCONPUTE TODO MOVE THIS STRUCT THERE
 
 	//Define the parser, symbol table and exypression to evaluate
 	GiNaC::parser reader;
@@ -42,10 +45,13 @@ struct NatExpressions{
 	std::string resultvar;
 };
 
-struct NatOutPute{
+struct NatOutPute{//TODO Faire une classe et utilisé du polymorphisme???
+				//ajouter le traduc dans ce cas et les vars
 
 	std::vector<std::string> contents;
 	std::string path;
+	std::string caption;
+	std::string label;
 };
 
 struct NatConfig{
@@ -55,7 +61,7 @@ struct NatConfig{
 	void updateMaps(const NatTrouDuc& map);
 	bool updateVars();
 	void printText(bool NatHeader=false);
-	void printLaTeX(bool NatHeader=false);
+	void printLaTeX(size_t NatHeader=2);
 	void printGNUplot();
 
 

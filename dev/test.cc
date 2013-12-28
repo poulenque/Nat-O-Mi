@@ -4,7 +4,7 @@ void test_Parser(std::vector<NatConfig> config)
 {
 	for(size_t j(0);j < config.size();j++){
 
-		std::cout << "\n TESTING Parser:" << std::endl;
+		std::cout << "\nTESTING Parser:" << std::endl;
 		//Print datas infos:
 		std::cout << "\nDatas:" << std::endl;
 		for(auto it = config[j].datas.cbegin(); it != config[j].datas.cend(); ++it)
@@ -46,7 +46,7 @@ void test_Working(std::vector<NatConfig> config)
 {
 	for(size_t i(0);i < config.size();i++)
 	{
-		std::cout << "\n TESTING Working:" << std::endl;
+		std::cout << "\nTESTING Working:" << std::endl;
 		std::cout << "GLA:" << std::endl;	
 
 		//Print the Headers into the different kind of outputs		
@@ -57,11 +57,12 @@ void test_Working(std::vector<NatConfig> config)
 		//Update the value of the variables to compute or write into output
 		while(config[i].updateVars())
 		{
-			//Compute all exprs from Expressions vetor
-			//========================================
+			//Compute all exprs from Expressions vetor and their errors
+			//=========================================================
 			//TODO function for that? or put natConPute back in natconpute.cc
-			for(size_t j(0);j < config[i].natexprs.size(); j++)
+			for(size_t j(0);j < config[i].natexprs.size(); j++){
 				config[i].natexprs[j]->natConPute(config[i].traduc, config[i].natvar);
+				config[i].natexprs[j]->natUncerError(config[i].traduc, config[i].natvar);}
 			
 			//Print the line into the different kind of outputs		
 			//=================================================
@@ -69,72 +70,12 @@ void test_Working(std::vector<NatConfig> config)
 			config[i].printLaTeX();
 			config[i].printGNUplot();
 
-		}	
-		cout << "The end" << endl;
-
-		/*parseNext;
-
-
-		line.push_back(config.natvar[output_i.contents].var_value)
-
-		output << vector<string> line*/
-
-		
-
-
-
-
-
-		//This doesnt write the corret header!!!! problem
-		/*output_file << data_line << std::endl;
-
-		while(natParseNext(input_file,data_line) && input_file.good())
-		{
-
-			if(data_line.size() != nheader)// check if there is no blanks from the original header size
-			{
-				std::cout 	<< CONSOL_RED_TEXT  << "The line "
-							<< CONSOL_CYAN_TEXT <<"xxx"
-							<<CONSOL_RED_TEXT <<" has incorrect number of columns" 
-							<< std::endl;
-				exit(1);
-			}
-
-			//TODO
-			//==========================================================
-			//==========================================================
-			//==========================================================
-			//mettre en forme
-			//faire les calculs sur la ligne
-			//vector<double> parsed = natParseContent(data_line);
-
-			//TODO
-			//calcules pour la colonne
-			for(unsigned int i(0); i < data_info.size(); i++)
-			{	
-				if(!data_info[i].formula.empty())
-				{
-					GiNaC::ex result(natConPute(data_info[i].formula,data_line,dataName_str2num));
-
-					//Keep the sme amount of column but computing the good values
-					if (GiNaC::is_a<GiNaC::numeric>(result) && i < nheader)
-						data_line[i] = double2str(GiNaC::ex_to<GiNaC::numeric>(result).to_double()); //STUPID ????
-
-					//Append the column
-					else if(i >= nheader)
-						data_line.push_back(double2str(GiNaC::ex_to<GiNaC::numeric>(result).to_double())); //STUPID ????
-				}
-			}
-
-			//TODO
-			//ecrire dans output proprement
-			output_file << data_line << std::endl;
-			//==========================================================
-			//==========================================================
-			//==========================================================
-
 		}
-		input_file.close();
-		output_file.close();*/
+		//Print end of LaTeX table
+		//========================
+		config[i].printLaTeX(3);
+
+		cout << "The end? RENOMMER LE PROJET: N@-O-Me !!!!!!" << endl;
+
 	}
 }

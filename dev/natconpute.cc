@@ -58,30 +58,29 @@ GiNaC::ex natDerive(const std::string& formula, const std::string& var, unsigned
 	return e.diff(GiNaC::ex_to<GiNaC::symbol>(table[var]), nth);
 }
 
-GiNaC::ex natUncerError(const std::string& formula, const std::vector<NatVariable>& data_vars, std::map<std::string,size_t> dataName_str2num)
+void NatExpressions::natUncerError(NatTrouDuc& traduc, MetaName& vars)
 {
+	GiNaC::ex eq = this->exp;
+	GiNaC::ex sum; //empty exp to concatenate the expression for uncertainties formula			
 
-	GiNaC::parser reader;
-	GiNaC::symtab table;
-	GiNaC::ex e;
-	GiNaC::ex sum; //empty exp to concatenate the expression ofr uncertainties formula
-		
-	e = reader(formula);
-	table = reader.get_syms();
-			
-	for(GiNaC::symtab::const_iterator it = table.begin();
-		it != table.end(); ++it)
+	for(GiNaC::symtab::const_iterator it = this->table.begin();it != this->table.end(); ++it)
 	{
-		size_t id(dataName_str2num[it->first]);
-		
-		/*std::cout << "The derivative of " << e << " with respect to " << it->first << " is: ";
-		std::cout << e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second)) << "." << std::endl;
-		std::cout << "error " << data_info[id].error << std::endl;
-		std::cout << "[(d" <<  data_info[id].name << "/d" << it->second << ")*error";
-		std::cout << data_info[id].name << "]^2= ";
-		std::cout << pow(e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::ex(StrToDouble(data_info[id].error)),2) << std::endl;*/
+		std::string natvar(traduc[it->first]);
+		std::cout << traduc[it->first] << std::endl;
+		sum += pow(eq.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(vars[natvar]->error),2);
 
-		sum += pow(e.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(data_vars[id].error),2);
+		//TODO CHECK WITH ANOTHER software
+		std::cout << "The derivative of " << eq << " with respect to " << it->first << " is: ";
+		std::cout << eq.diff(GiNaC::ex_to<GiNaC::symbol>(it->second)) << "." << std::endl;
+		std::cout << "error " << vars[natvar]->error << std::endl;
+		std::cout << "[(d" <<  vars[natvar]->name << "/d" << it->second << ")*error";
+		std::cout << vars[natvar]->name << "]^2= ";
+		std::cout << pow(eq.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(vars[natvar]->error),2) << std::endl;
+		std::cout << sqrt(sum) << " " << sqrt(sum).evalf() <<std::endl;
 	}
-	return sqrt(sum);//uncertainties formula
+	//Put the value of the equation to the resultvar error /\ error value
+	//===================================================================
+	std::ostringstream s;
+	s << sqrt(sum);
+	//vars[traduc[this->resultvar+NatErrorSuffix]]->expr = s.str();
 }
