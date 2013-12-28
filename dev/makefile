@@ -64,7 +64,7 @@ SOURCES = $(wildcard *.cc)
 OBJECTS = $(SOURCES:%.cc=%.o)
 HEADERS = 
 
-PROG = Nat-O-Mi
+PROG = ./bin/Nat-O-Mi
 
 all:$(OBJECTS)
 	$(CC) $(LIBS) $(OBJECTS) -o $(PROG)
