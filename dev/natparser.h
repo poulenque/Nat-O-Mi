@@ -9,6 +9,7 @@
 #include <yaml-cpp/yaml.h>
 #include <ginac/ginac.h>
 #include "natUtils.h"
+#include "consol_color.h"
 
 #define NatErrorSuffix "_error"
 
@@ -33,17 +34,18 @@ typedef std::map<std::string,std::string> NatTrouDuc;
 struct NatExpressions{
 
 	NatExpressions();
+	NatExpressions(const std::string& formula);
 
-	void natConPute(NatTrouDuc& traduc, MetaName& vars);
-	void natUncerError(NatTrouDuc& traduc, MetaName& vars);//CORE IN NATCONPUTE TODO MOVE THIS STRUCT THERE
+	double natConPute(NatTrouDuc& traduc, MetaName& vars);
+	std::string natUncerError(NatTrouDuc& traduc, MetaName& vars);//CORE IN NATCONPUTE TODO MOVE THIS STRUCT THERE
 
 	//Define the parser, symbol table and exypression to evaluate
 	GiNaC::parser reader;
 	GiNaC::symtab table;
 	GiNaC::ex exp;
-	//string of the metaname var to traduc
-	std::string resultvar;
 };
+
+typedef std::map<std::string, NatExpressions*> MetaExpr;
 
 struct NatOutPute{//TODO Faire une classe et utilisé du polymorphisme???
 				//ajouter le traduc dans ce cas et les vars
@@ -58,7 +60,7 @@ struct NatConfig{
 
 	NatConfig();
 
-	void updateMaps(const NatTrouDuc& map);
+	void updateMetaNat();
 	bool updateVars();
 	void printText(bool NatHeader=false);
 	void printLaTeX(size_t NatHeader=2);
@@ -68,7 +70,7 @@ struct NatConfig{
 	NatTrouDuc traduc;
 	MetaName natvar;
 	NatData datas;
-	std::vector<NatExpressions*> natexprs; // must be pointers cuz GiNaC is special
+	MetaExpr natexprs;
 
 	std::vector<NatOutPute> text;
 	std::vector<NatOutPute> latex;
@@ -87,14 +89,14 @@ bool natParseConfig(std::vector<NatConfig>& out,std::vector<std::string> configp
 bool natParseHeader(NatConfig& config);
 MetaName natParseHeader(std::vector<std::string> input);
 
+
+std::ostream& operator<<( std::ostream& out, const NatVariable& var);
+
+bool operator>>(const YAML::Node& node, NatConfig& config);
 bool operator>>(const YAML::Node& node, NatData& datas);
 bool operator>>(const YAML::Node& node, MetaName& vars);
 bool operator>>(const YAML::Node& node, std::vector<NatExpressions*>& expr);
 bool operator>>(const YAML::Node& node, std::vector<NatOutPute>& vars);
-bool operator>>(const YAML::Node& node, NatConfig& config);
-
-
-std::ostream& operator<<( std::ostream& out, const NatVariable& var);
 
 MetaName::const_iterator findPrefix(const MetaName& map, const std::string& search_for);
 

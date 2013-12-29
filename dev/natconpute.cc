@@ -16,7 +16,7 @@ double StrToDouble(std::string const& s)
 }
 
 //Main function
-void NatExpressions::natConPute(NatTrouDuc& traduc, MetaName& vars)
+double NatExpressions::natConPute(NatTrouDuc& traduc, MetaName& vars)
 {
     GiNaC::Digits = 5; //TODO ask for precision after dot
 	GiNaC::ex eq = this->exp;
@@ -33,11 +33,20 @@ void NatExpressions::natConPute(NatTrouDuc& traduc, MetaName& vars)
 		//std::cout << eq << " =>" << eq.subs(it->second == StrToDouble(val)) << std::endl;
 	}
 
-	//Put the value of the equation to the resultvar
-	//==============================================
-	std::ostringstream s;
-	s << eq;
-	vars[traduc[this->resultvar]]->value = s.str();
+	//Evaluating the equation and return the result if it's not Complex
+	//=================================================================
+	eq=eq.evalf();
+	if(!GiNaC::ex_to<GiNaC::numeric>(eq).GiNaC::numeric::is_real())
+	{
+		std::cout 	
+		<<CONSOL_RED_TEXT<< "The expressions "
+		<<CONSOL_CYAN_TEXT<< this->exp
+		<<CONSOL_RED_TEXT<< " contains Complex numbers!" 
+		<<std::endl;
+		return 0;
+	}
+	else
+		return GiNaC::ex_to<GiNaC::numeric>(eq).GiNaC::numeric::to_double();	
 }
 
 
@@ -58,7 +67,7 @@ GiNaC::ex natDerive(const std::string& formula, const std::string& var, unsigned
 	return e.diff(GiNaC::ex_to<GiNaC::symbol>(table[var]), nth);
 }
 
-void NatExpressions::natUncerError(NatTrouDuc& traduc, MetaName& vars)
+std::string NatExpressions::natUncerError(NatTrouDuc& traduc, MetaName& vars)
 {
 	GiNaC::ex eq = this->exp;
 	GiNaC::ex sum; //empty exp to concatenate the expression for uncertainties formula			
@@ -66,21 +75,13 @@ void NatExpressions::natUncerError(NatTrouDuc& traduc, MetaName& vars)
 	for(GiNaC::symtab::const_iterator it = this->table.begin();it != this->table.end(); ++it)
 	{
 		std::string natvar(traduc[it->first]);
-		std::cout << traduc[it->first] << std::endl;
 		sum += pow(eq.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(vars[natvar]->error),2);
 
 		//TODO CHECK WITH ANOTHER software
-		std::cout << "The derivative of " << eq << " with respect to " << it->first << " is: ";
-		std::cout << eq.diff(GiNaC::ex_to<GiNaC::symbol>(it->second)) << "." << std::endl;
-		std::cout << "error " << vars[natvar]->error << std::endl;
-		std::cout << "[(d" <<  vars[natvar]->name << "/d" << it->second << ")*error";
-		std::cout << vars[natvar]->name << "]^2= ";
-		std::cout << pow(eq.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(vars[natvar]->error),2) << std::endl;
-		std::cout << sqrt(sum) << " " << sqrt(sum).evalf() <<std::endl;
 	}
 	//Put the value of the equation to the resultvar error /\ error value
 	//===================================================================
 	std::ostringstream s;
 	s << sqrt(sum);
-	//vars[traduc[this->resultvar+NatErrorSuffix]]->expr = s.str();
+	return s.str();
 }

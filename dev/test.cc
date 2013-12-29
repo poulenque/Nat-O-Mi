@@ -60,9 +60,16 @@ void test_Working(std::vector<NatConfig> config)
 			//Compute all exprs from Expressions vetor and their errors
 			//=========================================================
 			//TODO function for that? or put natConPute back in natconpute.cc
-			for(size_t j(0);j < config[i].natexprs.size(); j++){
-				config[i].natexprs[j]->natConPute(config[i].traduc, config[i].natvar);
-				config[i].natexprs[j]->natUncerError(config[i].traduc, config[i].natvar);}
+			for(MetaExpr::const_iterator it = config[i].natexprs.begin(); it != config[i].natexprs.end(); ++it)
+			{
+				/*TO BE REMOVED TODO */
+				std::ostringstream s;//TODO THIS IS TMP HAVE TO SWITCH TO DOUBLE VALUES
+				s << it->second->natConPute(config[i].traduc, config[i].natvar);
+				config[i].natvar[it->first]->value = s.str();//TODO CHECK at natparser.h NatVariable::value
+				/*TO BE REMOVED TODO */
+
+				config[i].natvar[it->first]->error = it->second->natUncerError(config[i].traduc, config[i].natvar);
+			}
 			
 			//Print the line into the different kind of outputs		
 			//=================================================

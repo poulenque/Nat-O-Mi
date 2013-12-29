@@ -21,7 +21,7 @@ text:
 #content: [myData1::*,a,b,c] toutesl es vars de data1+a+b etc..
 latex:
   - path: prout_caca.net.tex
-    content: [Agent_X,Agent_LucGirod]
+    content: [Agent_X,Agent_LucGirod,Agent_LucGirod_error]
     caption: This is a caption test for N@-O-Mi
     label: This is a label test for N@-O-Mi
 #gnuplot:

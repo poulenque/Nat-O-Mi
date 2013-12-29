@@ -14,15 +14,24 @@ using namespace std;
 
 
 
-static NatTrouDuc metoname;
+static NatTrouDuc metoname;//TODO ce debarasser de cte merde
 
 
 //Constructor TODO COMPLETE
 NatConfig::NatConfig(){}
-NatExpressions::NatExpressions(){}
+
 NatVariable::NatVariable(){}
 NatVariable::NatVariable(const std::string& n,const Unit& u, const std::string& e):
 name(n),unit(u),error(e){}
+
+NatExpressions::NatExpressions(){}
+NatExpressions::NatExpressions(const std::string& formula)
+{
+	//Parse the formula
+	this->exp = this->reader(formula);
+	//Get the symbol from the expression and write it down to a table
+	this->table = this->reader.get_syms();
+}
 
 
 //****************************************
@@ -219,28 +228,22 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 //****************************
 //YAML operator >> Expressions
 //****************************
-bool operator>>(const YAML::Node& node, std::vector<NatExpressions*>& exprs)
+bool operator>>(const YAML::Node& node, MetaExpr& exprs)
 {
 	std::string name;
 	std::string formula;
 	bool ret=true;
 	for(size_t i=0 ; i< node.size(); i++){
 
-		NatExpressions* natexpr = new NatExpressions;
 		//===================================
 		node[i]["name"]>>name;
-		natexpr->resultvar = name;
 		//************* EXPRESSIONS *************
 		//***************************************
 		//=================================== //TODO CONVERT STR To GINAC
 		node[i]["expr"]>>formula;	
 		//===================================
 
-		natexpr->exp = natexpr->reader(formula);
-		//Get the symbol from the expression and write it down to a table
-		natexpr->table = natexpr->reader.get_syms();
-
-
+		NatExpressions* natexpr = new NatExpressions(formula);
 		//Look if all the vars has been declared previously
 		//=================================================
 		for(GiNaC::symtab::iterator it = natexpr->table.begin();
@@ -258,15 +261,14 @@ bool operator>>(const YAML::Node& node, std::vector<NatExpressions*>& exprs)
 				ret=false;//FAIRE DES EXIT(0) plus cool TODO
 			}
 		}
-		//===================================
-		exprs.push_back(natexpr);
+		//Insert the new variable into the expr map
+		//=========================================
+		exprs.insert( pair<string, NatExpressions*>(name, natexpr));
 
-		//Insert the new variable into the tmp traduc map /\ the error varriable
-		//======================================================================
-		metoname.insert( pair<string,string>(name, name));
-		//TODO PUT A HINT 
-		metoname.insert( pair<string,string>(name+NatErrorSuffix , name+NatErrorSuffix));
-
+		//Mapping the string name of meta name to corresponding var /\ error
+		//==================================================================
+		metoname.insert( pair<string,string>(name , name));
+		metoname.insert( pair<string,string>(name+NatErrorSuffix, name+NatErrorSuffix));
 	}
 	return ret;
 }
@@ -349,7 +351,10 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 
 	//Refreshing all maps for checks
 	//==============================
-	config.updateMaps(metoname);
+	//Copy translator
+	//===============
+	config.traduc.insert(metoname.begin(), metoname.end());
+	config.updateMetaNat();
 
 
 	if(node.FindValue("text")){
@@ -369,24 +374,27 @@ bool operator>>(const YAML::Node& node, NatConfig& config){
 //***********************
 //Config update Maps Func
 //***********************
-void NatConfig::updateMaps(const NatTrouDuc& map)
+void NatConfig::updateMetaNat()
 {
-	//Copy translator
-	//===============
-	this->traduc.insert(map.begin(), map.end());
-
 	//Add vars from Node expression to VarsMap
 	//========================================
 
 	//TODO ALGORYTHM, apply the expression error also :)
-	for(NatTrouDuc::const_iterator it = map.begin();it != map.end(); ++it)
+	MetaExpr map;
+	for(MetaExpr::const_iterator it = this->natexprs.begin(); it != this->natexprs.end(); ++it)
 	{
-		if(this->natvar.find(it->second)==this->natvar.end() && it->second.find(NatErrorSuffix) == std::string::npos)
-			this->natvar.insert(pair<string,NatVariable*>(it->second, new NatVariable(it->second, Unit(), it->second+NatErrorSuffix)));
+		cout << it->first << endl;
+		this->natvar.insert(pair<string,NatVariable*>(it->first, new NatVariable(it->first, Unit("*"), it->first+NatErrorSuffix)));
+		this->natvar.insert(pair<string,NatVariable*>(it->first+NatErrorSuffix, new NatVariable(it->first+NatErrorSuffix, Unit("N/A"), "N/A")));
 
-		else if(it->second.find(NatErrorSuffix) != std::string::npos)
-			this->natvar.insert(pair<string,NatVariable*>(it->second, new NatVariable(it->second, Unit("N/A"), "N/A")));
+		//Implementation of the error formula associate to the new var from expr
+		//======================================================================
+		map.insert(pair<string, NatExpressions*>(it->first+NatErrorSuffix, new NatExpressions(it->second->natUncerError(this->traduc, this->natvar))));
 	}
+
+	//Insert the new errors expr from map into the Config expr map
+	//============================================================
+	this->natexprs.insert(map.begin(), map.end());
 }
 
 //***********************
@@ -423,10 +431,10 @@ bool NatConfig::updateVars()
 		if(data_line.size()!=varcount)
 		{
 			std::cout 	
-			<< CONSOL_RED_TEXT  << "The line "
-			<< CONSOL_CYAN_TEXT <<"xxx"
-			<<CONSOL_RED_TEXT <<" has incorrect number of columns" 
-			<< std::endl;
+			<<CONSOL_RED_TEXT<< "The line "
+			<<CONSOL_CYAN_TEXT<<"xxx"
+			<<CONSOL_RED_TEXT<<" has incorrect number of columns" 
+			<<std::endl;
 			return false;
 		}
 		//Cleaning the data_line to avoid conflicts:
@@ -483,7 +491,7 @@ void NatConfig::printLaTeX(size_t NatHeader)
 			output << "\t\t\\hline" << std::endl;//tab maybe
 
 			output << "\t\t";
-			unsigned int end(this->latex[j].contents.size()-1);
+			unsigned int end(this->latex[j].contents.size()-1);//TODO to a << operator with LaTeX support 
 			for(unsigned int i(0);i < this->latex[j].contents.size()-1;output << this->natvar[this->traduc[this->latex[j].contents[i]]]->name << " & ",i++);
 			output << this->natvar[this->traduc[this->latex[j].contents[end]]]->name << "\\\\" << " \\hline"<< std::endl;
 		}
