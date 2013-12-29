@@ -2,6 +2,7 @@
 #define main_cc
 
 #include "natTest.h"
+#include "natArgs.h"
 
 using namespace std;
 

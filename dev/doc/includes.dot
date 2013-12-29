@@ -1,10 +1,21 @@
 digraph G {
+
+	STD[shape=diamond]
+	GiNaC[shape=diamond]
+	YAML[shape=diamond]
+
+	STD->natOmi
+
 	natOmi->natUtils
 	natOmi->natColors
 
 	natUtils->natUnits
 
 	natUnits->natParser	
+
+	YAML->natParser
+	GiNaC->natParser
+	GiNaC->natConpute
 
 	natColors->natParser
 	natColors->natArgs
