@@ -1,20 +1,10 @@
-#ifndef NATPARSE_H
-#define NATPARSE_H
-
-#include <vector>
-#include <string>
-#include <fstream>
-#include <map>
-
-#include <boost/tokenizer.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/filesystem.hpp>
+#ifndef natParser_h
+#define natParser_h
 
 #include <yaml-cpp/yaml.h>
 #include <ginac/ginac.h>
 
 #include "natUnits.h"
-#include "natUtils.h"
 #include "natColors.h"
 
 #define NatErrorSuffix "_error"

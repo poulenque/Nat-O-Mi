@@ -1,7 +1,7 @@
-#ifndef CONSOL_COLOR_H
-#define CONSOL_COLOR_H
+#ifndef natColors_h
+#define natColors_h
 
-#include <string>
+#include "natOmi.h"
 
 using namespace std;
 

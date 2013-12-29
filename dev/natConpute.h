@@ -1,11 +1,6 @@
 #ifndef natConpute_h
 #define natConpute_h
 
-#include <iostream>
-#include <map> 
-#include <algorithm>
-#include <vector>
-#include <string>
 #include <ginac/ginac.h>
 
 #include "natParser.h"

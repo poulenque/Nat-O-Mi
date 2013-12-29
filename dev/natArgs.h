@@ -1,14 +1,7 @@
-#ifndef ARGUMENTS_H
-#define ARGUMENTS_H
-
-#include <string>
-#include <vector>
-#include <iostream>
-#include <string.h>
+#ifndef natArgs_h
+#define natArgs_h
 
 #include "natColors.h"
-
-#define Nat_O_Mi_VERSION__ "0.3"
 
 using namespace std;
 

@@ -36,7 +36,7 @@ void process_args(int argc, char* argv[]){
 
 		}
 		else if(s=="-v"||s=="--version"){
-			cout<<"Nat-O-Mi version : "<<Nat_O_Mi_VERSION__<<endl;
+			cout<<"Nat-O-Mi version : "<< NATOMI_VERSION <<endl;
 			exit(1);
 		}else if(s=="-i"){
 			if(++temp!=argc)

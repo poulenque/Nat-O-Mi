@@ -1,0 +1,17 @@
+digraph G {
+	natOmi->natUtils
+	natOmi->natColors
+
+	natUtils->natUnits
+
+	natUnits->natParser	
+
+	natColors->natParser
+	natColors->natArgs
+
+	natParser->natConpute
+	natConpute->natTest
+	natTest->main
+
+	natArgs->main		
+}

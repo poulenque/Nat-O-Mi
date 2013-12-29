@@ -1,15 +1,7 @@
-#ifndef NATUNITS_H
-#define NATUNITS_H
-
+#ifndef natUnits_h
+#define natUnits_h
 
 #include "natUtils.h"
-
-#include <algorithm>
-#include <iostream>
-#include <boost/algorithm/string.hpp>
-#include <vector>
-#include <map>
-#include <string>
 
 typedef struct Unit{
 private:

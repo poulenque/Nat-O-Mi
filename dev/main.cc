@@ -1,22 +1,7 @@
-#ifndef MAIN_CC
-#define MAIN_CC
+#ifndef main_cc
+#define main_cc
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <map>
-#include <fstream>
-#include <sstream>
-
-#include <boost/lexical_cast.hpp>
-#include <boost/program_options.hpp>
-#include <ginac/ginac.h>
-
-#include "natColors.h"
-#include "natConpute.h"
 #include "natTest.h"
-
-#define NATOMI_VERSION 0.31
 
 using namespace std;
 
