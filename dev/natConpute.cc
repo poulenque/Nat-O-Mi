@@ -1,26 +1,10 @@
-#include <iostream>
-#include "natconpute.h"
-#include "natUtils.h"
-#include <boost/lexical_cast.hpp>
+#include "natConpute.h"
 
-// Function string to double
-double StrToDouble(std::string const& s)
-{
-	double value;
-    try {
-        value = boost::lexical_cast<double>(s);
-    } catch (boost::bad_lexical_cast const& e){
-		value = std::numeric_limits<double>::quiet_NaN();
-    }
-	return value;
-}
-
-//Main function
 double NatExpressions::natConPute(NatTrouDuc& traduc, MetaName& vars)
 {
-    GiNaC::Digits = 5; //TODO ask for precision after dot
+    GiNaC::Digits = this->prec;
 	GiNaC::ex eq = this->exp;
-	std::string val;
+	double val;
 
 	//Substitue each variable by its actual value from the line
 	//=========================================================
@@ -28,9 +12,9 @@ double NatExpressions::natConPute(NatTrouDuc& traduc, MetaName& vars)
 	{
 		val = vars[traduc[it->first]]->value;
 
-		if(!std::isnan(StrToDouble(val)))
-			eq = eq.subs(it->second == StrToDouble(val));		
-		//std::cout << eq << " =>" << eq.subs(it->second == StrToDouble(val)) << std::endl;
+		if(!std::isnan(val))
+			eq = eq.subs(it->second == val);		
+		//std::cout << eq << " =>" << eq.subs(it->second == val) << std::endl;
 	}
 
 	//Evaluating the equation and return the result if it's not Complex

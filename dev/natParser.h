@@ -5,13 +5,20 @@
 #include <string>
 #include <fstream>
 #include <map>
-#include "natunits.h"
+
+#include <boost/tokenizer.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/filesystem.hpp>
+
 #include <yaml-cpp/yaml.h>
 #include <ginac/ginac.h>
+
+#include "natUnits.h"
 #include "natUtils.h"
-#include "consol_color.h"
+#include "natColors.h"
 
 #define NatErrorSuffix "_error"
+#define NatExprPrec 50
 
 struct NatVariable{
 
@@ -22,7 +29,7 @@ struct NatVariable{
 	Unit unit;
 	std::string error;
 	size_t index;
-	std::string value;//CAST TO DOUBLE TODO
+	double value;
 };
 
 typedef std::map<std::string, NatVariable*> MetaName;
@@ -34,7 +41,7 @@ typedef std::map<std::string,std::string> NatTrouDuc;
 struct NatExpressions{
 
 	NatExpressions();
-	NatExpressions(const std::string& formula);
+	NatExpressions(const std::string& formula, size_t precision=NatExprPrec);
 
 	double natConPute(NatTrouDuc& traduc, MetaName& vars);
 	std::string natUncerError(NatTrouDuc& traduc, MetaName& vars);//CORE IN NATCONPUTE TODO MOVE THIS STRUCT THERE
@@ -43,6 +50,7 @@ struct NatExpressions{
 	GiNaC::parser reader;
 	GiNaC::symtab table;
 	GiNaC::ex exp;
+	size_t prec;
 };
 
 typedef std::map<std::string, NatExpressions*> MetaExpr;

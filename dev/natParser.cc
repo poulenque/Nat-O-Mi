@@ -1,12 +1,4 @@
-#include "consol_color.h"
-#include "natparser.h"
-
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <boost/tokenizer.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/filesystem.hpp>
+#include "natParser.h"
 
 const string commentSymbol = "#";
 
@@ -25,7 +17,7 @@ NatVariable::NatVariable(const std::string& n,const Unit& u, const std::string& 
 name(n),unit(u),error(e){}
 
 NatExpressions::NatExpressions(){}
-NatExpressions::NatExpressions(const std::string& formula)
+NatExpressions::NatExpressions(const std::string& formula, size_t precision):prec(precision)
 {
 	//Parse the formula
 	this->exp = this->reader(formula);
@@ -136,7 +128,7 @@ bool operator>>(const YAML::Node& node, MetaName& vars){
 		//Check if the varname is already used
 		//====================================
 		node[i]["name"]>>name;
-		if(vars.find(name)!=vars.end())//TODO switch?
+		if(vars.find(name)!=vars.end())
 		{
 			cout
 			<<CONSOL_RED_TEXT<<"ERROR : (line"
@@ -232,6 +224,7 @@ bool operator>>(const YAML::Node& node, MetaExpr& exprs)
 {
 	std::string name;
 	std::string formula;
+	size_t prec(NatExprPrec);
 	bool ret=true;
 	for(size_t i=0 ; i< node.size(); i++){
 
@@ -241,9 +234,13 @@ bool operator>>(const YAML::Node& node, MetaExpr& exprs)
 		//***************************************
 		//=================================== //TODO CONVERT STR To GINAC
 		node[i]["expr"]>>formula;	
-		//===================================
 
-		NatExpressions* natexpr = new NatExpressions(formula);
+		//Look for any optionnal precision
+		//================================
+		if(const YAML::Node *precision = node[i].FindValue("prec"))
+    		*precision >> prec;
+
+		NatExpressions* natexpr = new NatExpressions(formula, prec);
 		//Look if all the vars has been declared previously
 		//=================================================
 		for(GiNaC::symtab::iterator it = natexpr->table.begin();
@@ -261,6 +258,7 @@ bool operator>>(const YAML::Node& node, MetaExpr& exprs)
 				ret=false;//FAIRE DES EXIT(0) plus cool TODO
 			}
 		}
+
 		//Insert the new variable into the expr map
 		//=========================================
 		exprs.insert( pair<string, NatExpressions*>(name, natexpr));
@@ -383,13 +381,12 @@ void NatConfig::updateMetaNat()
 	MetaExpr map;
 	for(MetaExpr::const_iterator it = this->natexprs.begin(); it != this->natexprs.end(); ++it)
 	{
-		cout << it->first << endl;
 		this->natvar.insert(pair<string,NatVariable*>(it->first, new NatVariable(it->first, Unit("*"), it->first+NatErrorSuffix)));
 		this->natvar.insert(pair<string,NatVariable*>(it->first+NatErrorSuffix, new NatVariable(it->first+NatErrorSuffix, Unit("N/A"), "N/A")));
 
 		//Implementation of the error formula associate to the new var from expr
 		//======================================================================
-		map.insert(pair<string, NatExpressions*>(it->first+NatErrorSuffix, new NatExpressions(it->second->natUncerError(this->traduc, this->natvar))));
+		map.insert(pair<string, NatExpressions*>(it->first+NatErrorSuffix, new NatExpressions(it->second->natUncerError(this->traduc, this->natvar), it->second->prec)));
 	}
 
 	//Insert the new errors expr from map into the Config expr map
@@ -421,7 +418,7 @@ bool NatConfig::updateVars()
 		{
 			if(it2->first.find(it->first)==0)//slow
 			{
-				it2->second->value=data_line[it2->second->index];
+				it2->second->value = str2double(data_line[it2->second->index]);
 				varcount++;
 			}
 		}
@@ -443,7 +440,7 @@ bool NatConfig::updateVars()
 	return true;
 }
 //***************************
-//NatConfig printings methods
+//NatConfig printings methods //TODO do a natOutput.cc file for these mthods?? and build a class?
 //***************************
 void NatConfig::printText(bool NatHeader)
 {
@@ -514,7 +511,7 @@ void NatConfig::printLaTeX(size_t NatHeader)
 }
 void NatConfig::printGNUplot()
 {
-	//TODO???????????????
+	//TODO??????????????? WOULD GO TO  which is going ot be natOutput.cc
 
 }
 //***********************

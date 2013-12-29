@@ -1,6 +1,13 @@
 #ifndef NATUNITS_H
 #define NATUNITS_H
 
+
+#include "natUtils.h"
+
+#include <algorithm>
+#include <iostream>
+#include <boost/algorithm/string.hpp>
+#include <vector>
 #include <map>
 #include <string>
 

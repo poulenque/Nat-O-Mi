@@ -1,37 +1,22 @@
 #ifndef MAIN_CC
 #define MAIN_CC
 
-#include "consol_color.h"
 #include <iostream>
 #include <vector>
 #include <string>
 #include <map>
 #include <fstream>
-
-#include "natomi.h"
-#include "natconpute.h"
-
 #include <sstream>
+
 #include <boost/lexical_cast.hpp>
 #include <boost/program_options.hpp>
-
 #include <ginac/ginac.h>
 
-#include "test.h"
+#include "natColors.h"
+#include "natConpute.h"
+#include "natTest.h"
 
 #define NATOMI_VERSION 0.31
-
-// double MySqr(double a_fVal) { 
-// 	return a_fVal*a_fVal; 
-// }
-
-
-// #define NATOMI_TEMP_EXIT_FUNCTION(TRUC) \
-// 	if(TRUC){\
-// 		input_file.close();\
-// 		output_file.close();\
-// 		exit(1);\
-// 	}
 
 using namespace std;
 
@@ -65,7 +50,6 @@ int main(int argc, char* argv[]) {
 		return 1;
 	}
 
-	natinit();
 
 	vector<NatConfig> test;
 	if(!natParseConfig(test,input))

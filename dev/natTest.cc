@@ -1,4 +1,4 @@
-#include "test.h"
+#include "natTest.h"
 
 void test_Parser(std::vector<NatConfig> config)
 {
@@ -62,12 +62,7 @@ void test_Working(std::vector<NatConfig> config)
 			//TODO function for that? or put natConPute back in natconpute.cc
 			for(MetaExpr::const_iterator it = config[i].natexprs.begin(); it != config[i].natexprs.end(); ++it)
 			{
-				/*TO BE REMOVED TODO */
-				std::ostringstream s;//TODO THIS IS TMP HAVE TO SWITCH TO DOUBLE VALUES
-				s << it->second->natConPute(config[i].traduc, config[i].natvar);
-				config[i].natvar[it->first]->value = s.str();//TODO CHECK at natparser.h NatVariable::value
-				/*TO BE REMOVED TODO */
-
+				config[i].natvar[it->first]->value = it->second->natConPute(config[i].traduc, config[i].natvar);
 				config[i].natvar[it->first]->error = it->second->natUncerError(config[i].traduc, config[i].natvar);
 			}
 			

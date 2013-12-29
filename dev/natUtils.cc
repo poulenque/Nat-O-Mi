@@ -25,3 +25,15 @@ double str2double( const string s ) {
 //		return 0;
 	return x;
 } 
+
+// Function string to double
+double StrToDouble(std::string const& s)
+{
+	double value;
+    try {
+        value = boost::lexical_cast<double>(s);
+    } catch (boost::bad_lexical_cast const& e){
+		value = std::numeric_limits<double>::quiet_NaN();
+    }
+	return value;
+}

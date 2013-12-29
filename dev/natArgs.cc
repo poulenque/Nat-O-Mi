@@ -1,5 +1,4 @@
-#include "consol_color.h"
-#include "arguments.h"
+#include "natArgs.h"
 
 static Args args=Args();
 

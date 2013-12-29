@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string.h>
 
+#include "natColors.h"
+
 #define Nat_O_Mi_VERSION__ "0.3"
 
 using namespace std;

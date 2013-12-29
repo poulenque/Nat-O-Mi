@@ -1,11 +1,14 @@
+#ifndef natConpute_h
+#define natConpute_h
+
 #include <iostream>
 #include <map> 
 #include <algorithm>
-
 #include <vector>
 #include <string>
-#include "natparser.h"
 #include <ginac/ginac.h>
+
+#include "natParser.h"
 
 
 // Function string to double
@@ -14,3 +17,4 @@ std::string DoubleToStr(double const& dbl);
 
 // main program
 GiNaC::ex natDerive(const std::string& formula, const std::string& var, unsigned int nth);
+#endif
