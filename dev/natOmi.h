@@ -21,7 +21,7 @@
 //***!BOOST INCLUDES!***\\
 //***********************\\
 
-#include <boost/lexical_cast.hpp> //TODO usefull for string to double
+#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>

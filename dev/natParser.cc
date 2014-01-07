@@ -232,7 +232,7 @@ bool operator>>(const YAML::Node& node, MetaExpr& exprs)
 		node[i]["name"]>>name;
 		//************* EXPRESSIONS *************
 		//***************************************
-		//=================================== //TODO CONVERT STR To GINAC
+		//===================================
 		node[i]["expr"]>>formula;	
 
 		//Look for any optionnal precision
@@ -476,35 +476,41 @@ void NatConfig::printLaTeX(size_t NatHeader)
 		//Opening the outputfile //TODO check for errors in opening for ret value
 		std::ofstream output(this->latex[j].path, ios_base::app);
 
-  		if(NatHeader==1)//TODO enum or define
+		//default case??? TODO
+  		switch(NatHeader)//TODO enum or define
 		{
-			output << "%This file is generated with N@-O-Mi-3.0" << std::endl;//Beurk?
+	
+			case 1:
 
-			output << "\\begin{table}[h]" << std::endl;
-			output << "\t\\caption{"<< this->latex[j].caption << "}" << "\\label{tab:" << this->latex[j].label << "}" << std::endl;
-			output << "\t\t\\begin{tabular}{";
-			for(unsigned int i(0);i < this->latex[j].contents.size();output << "|l",i++);
-			output << "|}" << std::endl;
-			output << "\t\t\\hline" << std::endl;//tab maybe
+				output << "%This file is generated with N@-O-Mi-3.0" << std::endl;//Beurk?
 
-			output << "\t\t";
-			unsigned int end(this->latex[j].contents.size()-1);//TODO to a << operator with LaTeX support 
-			for(unsigned int i(0);i < this->latex[j].contents.size()-1;output << this->natvar[this->traduc[this->latex[j].contents[i]]]->name << " & ",i++);
-			output << this->natvar[this->traduc[this->latex[j].contents[end]]]->name << "\\\\" << " \\hline"<< std::endl;
-		}
-		else if(NatHeader==2)
-		{
-			output << "\t\t";
-			unsigned int end(this->latex[j].contents.size()-1);
-			for(unsigned int i(0);i < this->latex[j].contents.size()-1;output << this->natvar[this->traduc[this->latex[j].contents[i]]]->value << " & ",i++);
-			output << this->natvar[this->traduc[this->latex[j].contents[end]]]->value << "\\\\" << " \\hline"<< std::endl;
+				output << "\\begin{table}[h]" << std::endl;
+				output << "\t\\caption{"<< this->latex[j].caption << "}" << "\\label{tab:" << this->latex[j].label << "}" << std::endl;
+				output << "\t\t\\begin{tabular}{";
+				for(unsigned int i(0);i < this->latex[j].contents.size();output << "|l",i++);
+				output << "|}" << std::endl;
+				output << "\t\t\\hline" << std::endl;//tab maybe
 
-		}
-		else if(NatHeader==3)
-		{
-			output << "\t\t\\hline" << std::endl;
-			output << "\t\\end{tabular}" << std::endl;
-			output << "\\end{table}" << std::endl;
+				output << "\t\t";
+				unsigned int end(this->latex[j].contents.size()-1);//TODO to a << operator with LaTeX support 
+				for(unsigned int i(0);i < this->latex[j].contents.size()-1;output << this->natvar[this->traduc[this->latex[j].contents[i]]]->name << " & ",i++);
+				output << this->natvar[this->traduc[this->latex[j].contents[end]]]->name << "\\\\" << " \\hline"<< std::endl;
+				break;
+		
+			case 2:
+	
+				output << "\t\t";
+				unsigned int end(this->latex[j].contents.size()-1);
+				for(unsigned int i(0);i < this->latex[j].contents.size()-1;output << this->natvar[this->traduc[this->latex[j].contents[i]]]->value << " & ",i++);
+				output << this->natvar[this->traduc[this->latex[j].contents[end]]]->value << "\\\\" << " \\hline"<< std::endl;
+				break;
+
+			case 3:
+			
+				output << "\t\t\\hline" << std::endl;
+				output << "\t\\end{tabular}" << std::endl;
+				output << "\\end{table}" << std::endl;
+				break;
 		}
 		output.close();
 	}
