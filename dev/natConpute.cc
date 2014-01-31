@@ -1,6 +1,17 @@
 #include "natConpute.h"
 
-double NatExpressions::natConPute(NatTrouDuc& traduc, MetaName& vars)
+
+NatExpressions::NatExpressions(){}
+NatExpressions::NatExpressions(const std::string& formula, size_t precision):prec(precision)
+{
+	//Parse the formula
+	this->exp = this->reader(formula);
+	//Get the symbol from the expression and write it down to a table
+	this->table = this->reader.get_syms();
+}
+
+
+double NatExpressions::natConPute(MetaVar& vars)
 {
     GiNaC::Digits = this->prec;
 	GiNaC::ex eq = this->exp;
@@ -10,7 +21,7 @@ double NatExpressions::natConPute(NatTrouDuc& traduc, MetaName& vars)
 	//=========================================================
 	for(GiNaC::symtab::const_iterator it = this->table.begin();it != this->table.end(); ++it)
 	{
-		val = vars[traduc[it->first]]->value;
+		val = vars[it->first]->value;
 
 		if(!std::isnan(val))
 			eq = eq.subs(it->second == val);		
@@ -51,18 +62,15 @@ GiNaC::ex natDerive(const std::string& formula, const std::string& var, unsigned
 	return e.diff(GiNaC::ex_to<GiNaC::symbol>(table[var]), nth);
 }
 
-std::string NatExpressions::natUncerError(NatTrouDuc& traduc, MetaName& vars)
+std::string NatExpressions::natUncerError(MetaVar& vars)
 {
 	GiNaC::ex eq = this->exp;
 	GiNaC::ex sum; //empty exp to concatenate the expression for uncertainties formula			
 
 	for(GiNaC::symtab::const_iterator it = this->table.begin();it != this->table.end(); ++it)
-	{
-		std::string natvar(traduc[it->first]);
-		sum += pow(eq.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(vars[natvar]->error),2);
+		sum += pow(eq.diff(GiNaC::ex_to<GiNaC::symbol>(it->second))*GiNaC::symbol(vars[it->first]->error),2);
 
 		//TODO CHECK WITH ANOTHER software
-	}
 	//Put the value of the equation to the resultvar error /\ error value
 	//===================================================================
 	std::ostringstream s;

@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
 	try{
 		boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
 	}catch(boost::program_options::error& e){
-		//cout<<"prout"<<endl;
+		//cout<<"Error"<<endl;//TODO
 	}
 	boost::program_options::notify(vm);
 
@@ -37,9 +37,10 @@ int main(int argc, char* argv[]) {
 	}
 
 
-	vector<NatConfig> test;
-	if(!natParseConfig(test,input))
-		exit(1);//Leave the buggy program!
+	natOmi test;
+	if(!natParseConfig(test.conf,input))
+		exit(1);
+
 
 	test_Parser(test);
 	test_Working(test);

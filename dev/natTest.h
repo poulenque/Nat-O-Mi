@@ -1,8 +1,9 @@
 #ifndef natTest_h
 #define natTest_h
 
-#include "natParser.h"
+#include "nato.h"
 
-void test_Parser(std::vector<NatConfig> config);
-void test_Working(std::vector<NatConfig> config);
+void test_Parser(natOmi nato);
+void test_Working(natOmi nato);
+
 #endif

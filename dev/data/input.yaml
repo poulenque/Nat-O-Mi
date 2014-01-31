@@ -26,7 +26,7 @@ latex:
     content: [Agent_X,Agent_Y,Agent_T,Agent_T_error]
     caption: This is a caption test for N@-O-Mi
     label: This is a label test for N@-O-Mi
-#gnuplot:
+#MathGL:
 #  - path: data/prout_caca.net.gnuplot
 #    content: [Agent_Z,Agent_Y]
 #  - path: prout_caca.net2.gnuplot

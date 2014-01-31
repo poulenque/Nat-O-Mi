@@ -37,3 +37,18 @@ double StrToDouble(std::string const& s)
     }
 	return value;
 }
+
+
+//TODO move somewhere else with other stuff? template?? yes NATUTILS
+//*******************************
+//Function to find prefix of maps
+//*******************************
+/*MetaName::const_iterator findPrefix(const MetaName& map, const string& search_for) {
+    MetaName::const_iterator i = map.lower_bound(search_for);
+    if (i != map.end()) {
+        const string& key = i->first;
+        if (key.compare(0, search_for.size(), search_for) == 0) // Really a prefix?
+            return i;
+    }
+    return map.end();
+}*/

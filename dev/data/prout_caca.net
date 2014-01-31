@@ -1,6 +1,6 @@
-Temps[1][3] Temps[1][3] Agent_T[1][Agent_T_error] Agent_T_error[1][N/A] 
-2.1 2.1 4.2 4.24264 
-2.1 2.1 4.2 4.24264 
-2.5 2.5 5 4.24264 
-3.5 3.5 7 4.24264 
-4.5 4.5 9 4.24264 
+In: myData1 Temps[1][3] In: myData2 Temps[1][3] In: N/A Agent_T[1][Agent_T_error] In: N/A Agent_T_error[1][N/A] 
+2.1 	2.1 	4.2 	4.24264 	
+2.1 	2.1 	4.2 	4.24264 	
+2.5 	2.5 	5 	4.24264 	
+3.5 	3.5 	7 	4.24264 	
+4.5 	4.5 	9 	4.24264 	

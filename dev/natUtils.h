@@ -9,4 +9,7 @@ double str2double( const std::string s );
 
 double StrToDouble(std::string const& s);
 
+//TODO TEMPLATE
+//MetaName::const_iterator findPrefix(const MetaName& map, const std::string& search_for);
+
 #endif
