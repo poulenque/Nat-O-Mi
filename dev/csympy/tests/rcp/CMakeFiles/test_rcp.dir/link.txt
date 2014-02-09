@@ -1,0 +1,1 @@
+/usr/bin/c++   -std=c++0x -Wall -Wextra -fPIC -O3 -march=native -ffast-math -funroll-loops -Wno-unused-parameter    CMakeFiles/test_rcp.dir/test_rcp.cpp.o  -o test_rcp -rdynamic ../../teuchos/libteuchos.a -lgmpxx -lgmp 

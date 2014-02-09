@@ -1,0 +1,33 @@
+data:
+ - name: myData1
+   path: data/input.dat
+ - name: myData2
+   path: data/input2.dat
+variables:
+ - name: Agent_X
+   in: myData1::Temps
+ - name: Agent_Y
+   in: myData2::Temps
+ - name: Agent_Z
+   in: myData2::VolumeH
+expressions:
+ - name: Agent_T
+   expr: Agent_X+Agent_Y
+   prec: 5
+#prec is bugging doesnt react right now
+#If we rename there is no warning about redifnition!!
+###########################
+text:
+  - path: data/prout_caca.net
+    content: [Agent_X,Agent_Y,Agent_T,Agent_T_error]
+#content: [myData1::*,a,b,c] toutesl es vars de data1+a+b etc..
+latex:
+  - path: data/prout_caca.net.tex
+    content: [Agent_X,Agent_Y,Agent_T,Agent_T_error]
+    caption: This is a caption test for N@-O-Mi
+    label: This is a label test for N@-O-Mi
+#MathGL:
+#  - path: data/prout_caca.net.gnuplot
+#    content: [Agent_Z,Agent_Y]
+#  - path: prout_caca.net2.gnuplot
+#    content: [Agent_LucGirod,Agent_Y]
