@@ -5,3 +5,6 @@
 ./dev/csympy/*
 ./dev/fftw/*
 ./dev/mathgl-code/*
+./test/data/*
+!./test/data/*.cc
+!./test/data/*.h
