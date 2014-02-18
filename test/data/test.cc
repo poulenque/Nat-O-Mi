@@ -9,7 +9,7 @@ using namespace std;
 #define MAX_CONFIG 1
 #define MAX_FILE 1
 #define MAX_OUTPUT 10
-#define MAX_VAR 40
+#define MAX_VAR 40000
 #define MAX_LINE 40
 #define MAX_EXPR 1
 #define PREC 5
