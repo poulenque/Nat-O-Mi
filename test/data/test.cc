@@ -8,7 +8,11 @@ using namespace std;
 
 #define MAX_CONFIG 1
 #define MAX_FILE 1
+<<<<<<< HEAD
 #define MAX_OUTPUT 1
+=======
+#define MAX_OUTPUT 10
+>>>>>>> 4e5905287755ca2b85627337a53fc908932af555
 #define MAX_VAR 40000
 #define MAX_LINE 40
 #define MAX_EXPR 1
