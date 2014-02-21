@@ -1,7 +1,6 @@
 *~
 *.o
 *.pdf
-./dev/bin/*
 ./dev/csympy/*
 ./dev/fftw/*
 ./dev/mathgl-code/*
