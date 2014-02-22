@@ -1,0 +1,24 @@
+data:
+ - name: data0
+   path: data0
+variables:
+ - name: data0_Var0
+   in: data0::Var0
+ - name: data0_Var1
+   in: data0::Var1
+ - name: data0_Var2
+   in: data0::Var2
+ - name: data0_Var3
+   in: data0::Var3
+expressions:
+ - name: new_Var0
+   expr: cos(data0_Var1)*cos(data0_Var2)*cos(data0_Var3)*(data0_Var3)
+   prec: 5
+text:
+ - path: new_data0
+   content: [data0_Var0,data0_Var1,data0_Var2,data0_Var3,new_Var0,new_Var0_error]
+latex:
+ - path: new_data0.tex
+   content: [data0_Var0,data0_Var1,data0_Var2,data0_Var3,new_Var0,new_Var0_error]
+   caption: This is a caption test for N@-O-Mi
+   label: This is a label test for N@-O-Mi
