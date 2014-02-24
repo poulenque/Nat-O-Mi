@@ -65,21 +65,17 @@ OBJECTS = $(SOURCES:%.cc=%.o)
 HEADERS = 
 
 PROG = ../bin/Nat-O-Mi
+C_FLAGS += -c
 
-all: $(OBJECTS)
+all:$(OBJECTS)
 	$(CC) $(LIBS) $(OBJECTS) -o $(PROG)
 
 
 %.o: %.cc
 	$(CC) $(HEADERS) $(C_FLAGS) -c $< -o $@
 
-csympy:
-	cd ../csympy;make all;
-
 clean:
 	rm -f $(OBJECTS)
-	cd ../csympy;make clean;
 
 mrproper:
 	rm -f $(PROG) $(OBJECTS)
-	cd ../csympy;make mrproper;

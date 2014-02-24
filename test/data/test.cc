@@ -10,7 +10,7 @@ using namespace std;
 #define MAX_FILE 1
 #define MAX_OUTPUT 1
 #define MAX_OUTPUT 10
-#define MAX_VAR 4
+#define MAX_VAR 40000
 #define MAX_LINE 4
 #define MAX_EXPR 1
 #define PREC 5

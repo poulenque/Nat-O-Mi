@@ -52,7 +52,7 @@ C_FLAGS += -std=c++11
 C_FLAGS += -march=native
 
 # LIBS += -lstdc++
-LIBS += -lginac
+LIBS += -lginac -lgmp -lgmpxx
 LIBS += -lyaml-cpp
 LIBS += -lboost_program_options
 LIBS += -lboost_system -lboost_filesystem
@@ -68,7 +68,7 @@ HEADERS =
 C_FLAGS += -c
 
 all:$(OBJECTS)
-	$(CC) $(LIBS) $(OBJECTS)
+	$(CC) $(LIBS) $(OBJECTS) -c
 
 
 %.o: %.cc
