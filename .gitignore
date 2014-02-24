@@ -3,8 +3,4 @@
 *.pdf
 ./dev/csympy/*
 ./dev/fftw/*
-./dev/test/*
 ./dev/mathgl-code/*
-./test/data/*
-!./test/data/*.cc
-!./test/data/*.h
